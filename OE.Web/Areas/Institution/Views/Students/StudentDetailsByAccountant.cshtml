@@ -1,0 +1,128 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StudentsVM.StudentDetailsVM;
+    
+    <ol class="breadcrumb" style="background-color:transparent">
+        <li class="breadcrumb-item">
+            <a asp-area="Institution"
+               asp-controller="Students"
+               asp-action="StudentsByAccountant">Students List</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Student Details</li>
+    </ol>
+   
+
+    <a class="btn btn-primary btn-sm"
+       asp-area="Institution"
+       asp-controller="Students"
+       asp-action="StudentsByAccountant"
+       asp-route-SearchStudentClassId="@Model.Students.ClassId">
+
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        Go Back
+    </a>
+
+    <h1 class="page-title">Students Details</h1>
+
+    <br />
+
+    <h4>Student Image:</h4>
+    <td class="text-center">
+        <img src="~/@Model.Students.IP300X200" asp-append-version="true" style="height:120px;width:120px;" />
+    </td>
+
+    <table class="table table-bordered table-hover">
+
+        <tr>
+            <td>
+                Registration No:
+            </td>
+            <td style="max-width:10px;">@Model.Students.RegistrationNo</td>
+        </tr>
+        <tr>
+            <td>
+                Class:
+            </td>
+
+            <td class="showDetails pointer">
+
+                @Model.Students.CurrentClassName
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Gender:
+            </td>
+            <td class="showDetails pointer">
+                @Model.Students.GenderName
+            </td>
+        </tr>
+        <tr>
+            <td>
+                StudentName:
+            </td>
+
+            <td class="showDetails pointer">
+                @Model.Students.StudentName
+            </td>
+        </tr>
+        <tr>
+            <td>
+                FatherName:
+            </td>
+
+            <td class="showDetails pointer">
+                @Model.Students.FatherName
+            </td>
+        </tr>
+        <tr>
+            <td>
+                MotherName:
+            </td>
+
+            <td class="showDetails pointer">
+                @Model.Students.MotherName
+            </td>
+        </tr>
+        <tr>
+            <td>
+                AdmittYear:
+            </td>
+            <td class="showDetails pointer">
+                @String.Format("{0:dd-MMM-yyyy}", Model.Students.AdmittedYear)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                PresentAdress:
+            </td>
+            <td class="showDetails pointer">
+                @Model.Students.PresentAddress
+            </td>
+        </tr>
+        <tr>
+            <td>
+                PermanentAdress:
+            </td>
+            <td class="showDetails pointer">
+                @Model.Students.PermanentAddress
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Date of Birth:
+            </td>
+            <td class="showDetails pointer">
+                @String.Format("{0:dd-MMM-yyyy}", Model.Students.DOB)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Is Active:
+            </td>
+            <td class="showDetails pointer">
+                @Model.Students.IsActive
+            </td>
+        </tr>
+    </table>
+    

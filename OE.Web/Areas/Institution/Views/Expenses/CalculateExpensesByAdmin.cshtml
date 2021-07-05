@@ -1,0 +1,148 @@
+﻿
+@model OE.Web.Areas.Institution.Models.ExpensesVM.CalculateExpensesVM;
+<h1 class="page-title">Search date wise </h1>
+<br />
+<button class="btn btn-success btn-sm " id="btnSearch" name="btnSearch" data-toggle="modal" data-target="#mdlSearch">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    Search
+</button>
+<br />
+<br />
+<div id="mdlSearch" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>search date wise</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Expenses" asp-action="CalculateExpenses" method="get">
+                    <label>Enter Starting Date</label>
+                    <input type="text" name="StartDate" id="StartDate" class="form-control datetime">
+                    <hr />
+                    <hr />
+                    <label> Enter ending date</label>
+                    <input type="text" name="EndDate" id="EndDate" class="form-control datetime">
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSearchExpenses">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        Search
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.StartDate != null && Model.EndDate != null)
+{
+    <div class="pull-right">
+        <a id="Print_AssignedSubjects" class="btn btn-default hidden-print"
+           asp-controller="Expenses"
+           asp-action="PrintCalculateExpenses"
+           asp-route-StartDate="@Model.StartDate" asp-route-EndDate="@Model.EndDate">
+            <i class="fa fa-print" aria-hidden="true"></i>
+            Print
+        </a>
+    </div>
+    <h5><b>Starting Date:@Model.StartDate</b></h5>
+    <h5><b>Ending Date:@Model.EndDate</b></h5>
+    <h5><b> Total Expenses : @Model.ammount taka </b></h5>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="max-width:10px;">SN</th>
+                <th>Paying Date </th>
+                <th>Expense type </th>
+                <th>Amount </th>
+                <th>Reason of Expense </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var data in Model._Expenses)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._Expenses.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.Date)
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.ExpenseTypeName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Amount
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Name
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        
+        $('tr td #btnEdit').on('click', function () {
+            $("#editClassesId").val($(this).data("id"));
+            $("#txtEditDate").val($(this).data("date"));
+            $("#txtEditExpenseTypeName").val($(this).data("expenseTypeName"));
+            $("#txtEditAmount").val($(this).data("amount"));
+            $("#txtEditName").val($(this).data("name"));
+
+        });
+        $("#btnEditClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#editClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("UpdateExpense", "Expenses")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delclassid").val($(this).data("id"));
+        });
+        $("#btnDeleteClass").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#deleteClassList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteExpense", "Expenses")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+    </script>
+}

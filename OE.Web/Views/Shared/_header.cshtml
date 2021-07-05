@@ -1,0 +1,103 @@
+﻿
+@using OE.Web.Models
+
+@{
+    var Layoutmodel = (IndexLayoutVM)ViewBag.IndexLayoutVM;
+}
+  @*navbar-fixed-topy*@
+<nav class="navbar navbar-dark top-bar">
+
+    <div class="socialmenu">
+
+        @foreach (var data in Layoutmodel._insLinksVM)
+        {
+            <a class="navbar-brand" href="@Html.Raw(data.Url)" target="_blank">
+                @if (!string.IsNullOrEmpty(data.IP24X24))
+                {
+                    <img src="~/@Html.Raw(data.IP24X24)" asp-append-version="true" title="@Html.Raw(data.Name)">
+                }
+                else
+                {
+                    <img class="img-thumbnail" asp-append-version="true" style="background-color:lightblue" />
+                }
+
+            </a>
+        }
+
+    </div>
+
+    <!--[NOTE: for desktop]-->
+    <div class="d-xl-block d-lg-block d-md-none d-sm-none d-none text-right contact_info">
+
+        <a class="oe-navbar-brand-for-topbar" href="@Html.Raw(Layoutmodel.Email)" style="text-decoration:none;color:white;">
+            <i class="fa fa-envelope" aria-hidden="true"></i>
+            @Html.Raw(Layoutmodel.Email)
+        </a>
+        &nbsp;&nbsp;| &nbsp;&nbsp;
+
+        <a class="oe-navbar-brand-for-topbar" href="#">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            @Html.Raw(Layoutmodel.Contact)
+        </a>
+
+    </div>
+
+    <!--[NOTE: for pad or mobile]-->
+    <div class="d-xl-none d-lg-none d-md-block d-sm-block d-block" style="text-align:center;">
+        <a class="oe-navbar-brand-for-topbar" href="#" style="text-decoration:none;color:white;">  @Html.Raw(Layoutmodel.Contact)</a>
+    </div>
+</nav>
+
+<!--[NOTE: for desktop]-->
+<div class="d-xl-block d-lg-block d-md-none d-sm-none d-none">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a asp-area="" asp-controller="Home" asp-action="Login" class="navbar-brand-customized">
+                       
+                        <a href="https://www.facebook.com/SASS.ComillaBD/photos/?ref=page_internal" target="_blank">
+                           
+                            <img src="~/DataDictionary/images/Home/fb.ico" style="width:40px; height:40px;" />
+                        </a>
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a asp-area=" " asp-controller="Home" asp-action="Login">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<!--[NOTE: for pad or mobile]-->
+<div class="d-xl-none d-lg-none d-md-block d-sm-block d-block">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse ml-auto">
+                <ul class="navbar-nav flex-grow-1 ml-auto">
+                    <li class="nav-item">
+                       
+                        <a asp-area="" asp-controller="Home" asp-action="Login" class="navbar-brand-customized">
+                            <a href="https://www.facebook.com/SASS.ComillaBD/photos/?ref=page_internal">
+                                <img src="~/DataDictionary/images/Home/fb.ico" style="width:40px; height:40px;" />
+                            </a>
+                        </a>
+                       
+                    </li>
+
+                    <li class="nav-item"><a asp-area=" " asp-controller="Home" asp-action="Login">Login</a></li>
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+</div>
+
+<!-- end of Navsction -->

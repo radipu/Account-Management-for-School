@@ -1,0 +1,64 @@
+﻿
+@model OE.Web.Areas.Institution.Models.SalariesVM.IndexSalariesListVM;
+
+<div id="mdlAdd" class=" ">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="content">
+            <div class="header">
+                <h3>Provide Salary</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="body">
+                <form enctype="multipart/form-data" id="addClasses">
+                    <label> StaffId</label>
+                    <input type="number" name="Salaries.StaffId" id="ClassName" required class="form-control">
+                    <hr />
+                    <label> date</label>
+                    <input type="text" name="Salaries.date" id="ClassName" required class="form-control datetime">
+                    <hr />
+                    <label> Amount</label>
+                    <input type="number" name="Salaries.Amount" id="ClassName" required class="form-control">
+                    <hr />
+                    <label> Remark</label>
+                    <input type="text" name="Salaries.Remark" id="ClassName" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewClasses">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        $("#btnSaveNewClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+                  url: '@Url.Action("InsertSalary", "Salaries", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+    </script>
+}

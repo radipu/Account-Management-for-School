@@ -1,0 +1,129 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StudentPaymentsVM.IndexSearchStudentListVM;
+<h1 class="page-title">Student List</h1>
+<br />
+<button type="button" class="btn btn-success btn-sm" id="btnSearch" name="btnSearch" data-toggle="modal" data-target="#myModal">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    Search
+</button>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!--modal content-->
+        <div class="modal-content">
+            <!--modal header-->
+            <div class="modal-header">
+                <h4>Search by student registration no.</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!--modal body-->
+            <div class="modal-body">
+                <form asp-controller="StudentPayments" asp-action="SearchStudentList" method="get">
+                    <p>
+                        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                        <input type="text" name="RegistrationId" asp-for="Students.RegistrationNo" class="form-control" placeholder="Enter student registrationId" /><br />
+                        <span class="text-danger" asp-validation-for="Students.RegistrationNo"></span>
+                        <button class="btn btn-success btn-md" id="btnSaveNewStudentPaymentSearch">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                            Search
+                        </button>
+                        <button class="btn btn-danger btn-md " data-dismiss="modal">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            Cancel
+                        </button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.RegistrationId == null)
+{
+    <b>Search by:   </b> <span class="label label-default">None</span>
+    <br />
+
+}
+
+else
+{
+
+
+    @if (Model.Students == null)
+    {
+        <br />
+        <br />
+        <div class="well"><b>No record has been matched according to selection.</b></div>
+    }
+
+    else
+    {
+        <div class="row">
+            <div class="col-lg-10 col-md-10">
+                <b>Search by:   </b>  <span class="label label-default">Registration No: @Model.RegistrationId </span>
+            </div>
+        </div>
+        <br />
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>  Name </th>
+                    <th>Registration No</th>
+                    <th>  Gender </th>
+                    <th>  Admitted Year </th>
+                    <th>  Class </th>
+                    <th>  IsActive </th>
+                    <th>  Action </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="max-width:10px;">@Model.Students.Id</td>
+                    <td class="showDetails pointer">
+                        @Model.Students.StudentName
+                    </td>
+                    <td class="showDetails pointer">
+                        @Model.Students.RegistrationNo
+                    </td>
+                    <td class="showDetails pointer">
+                        @Model.Students.GenderName
+                    </td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", Model.Students.AdmittedYear)
+                    </td>
+                    <td class="showDetails pointer">
+                        @Model.Students.ClassName
+                    </td>
+                    <td class="showDetails pointer">
+                        @if (Model.Students.IsActive == true)
+                        {
+                            <h>Yes</h>
+                        }
+                        else
+                        {
+                            <h>No</h>
+                        }
+                    </td>
+
+                    <td class="showDetails pointer">
+
+                        <a class="btn btn-primary btn-sm"
+                           asp-area="Institution"
+                           asp-controller="StudentPayments"
+                           asp-action="SearchPaymentDetailById"
+                           asp-route-StudentId="@Model.Students.Id"
+                           asp-route-RegistrationId="@Model.Students.RegistrationNo">
+                            <i class="fa fa-external-link-alt" aria-hidden="true"></i>
+                            Payments
+                        </a>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    }
+
+
+}

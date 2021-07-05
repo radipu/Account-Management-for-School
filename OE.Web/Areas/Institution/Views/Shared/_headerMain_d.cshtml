@@ -1,0 +1,117 @@
+﻿
+@using Microsoft.AspNetCore.Http
+
+<nav class="navbar navbar-dark top-bar">
+    <div class="socialmenu">
+        
+        
+            <a asp-area="" asp-controller="Home" asp-action="Login" class="navbar-brand-customized">
+               
+                <a href="https://www.facebook.com/SASS.ComillaBD/photos/?ref=page_internal" target="_blank">
+                    
+                    <img src="~/DataDictionary/images/Home/fb.ico" style="width:40px; height:40px;" />
+                </a>
+            </a>
+        
+
+            
+    </div>
+    <div class="text-right contact_info">
+        <label class="oe-navbar-brand-for-topbar" style="text-decoration: none; color: white; max-width: 100%;margin-bottom: 5px; font-weight: bold;">Welcome @Context.Session.GetString("session_UserName")</label>
+        &nbsp;&nbsp;| &nbsp;&nbsp;
+        <a class="oe-navbar-brand-for-topbar" asp-area="Institution" asp-controller="Users" asp-action="LogOut" asp-route-logoutDate="@DateTime.UtcNow" style="color: white; padding-right:15px;">
+            Log Out
+        </a>
+    </div>
+</nav>
+
+<div class="masterPageSection">
+    <div class="row ">        
+        <div class="col-12 col-md-4 col-xl-4 col-xs-4 masterPageSection">
+            <div class="text-center">
+                @*<img src="~/ClientDictionary/1.jpg" class="center-block" height=95 width=95 />*@
+                <img src="~/DataDictionary/images/Home/sass_logo.jpg" class="center-block" height=180 width=180 />
+            </div>
+            <div class="text-center">
+                <p><h5>Shidlai Ashraf Secondary School, Brahmanpara, Cumilla</h5></p>
+            </div>           
+        </div>
+       
+        <div class="col-12 col-md-8 col-xl-8 col-xs-8">
+            <div class="text-center banner-img">
+                <img class="img-fluid" src="~/ClientDictionary/sass_banner4.jpg" alt="">               
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+@{
+    string CurrentActiveActorId = Context.Session.GetString("session_currentActiveActorTab");    
+}
+
+<section class="tab-section">
+    <div class="row">
+        <div id="fit" class="container-fluid sticky-tabs">
+            <div class="container" id="ActorTabs">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <ul class="tab-title">                       
+                        @foreach (var cActorId in Context.Session.GetString("session_currentUserAuthentications").Split(';'))
+                        {
+                            if (cActorId == "")
+                            {
+                                break;
+                            }
+
+                            {
+                                switch (Convert.ToInt64(cActorId))
+                                {
+                                    case -1:
+                                        {
+                                            <li @Html.Raw(Convert.ToInt64(Context.Session.GetString("session_currentActiveActorTab")) == -1 ? "class=\"tablinks active\"" : "class=\"tablinks\"")
+                                                data-actorId="@cActorId" onclick="tabFunction(event, @cActorId)"> User</li>
+                                            ; break;
+                                        }
+                                    case 10:
+                                        {
+                                            <li @Html.Raw(Convert.ToInt64(Context.Session.GetString("session_currentActiveActorTab")) == 10 ? "class=\"tablinks active\"" : "class=\"tablinks\"")
+                                                data-actorId="@cActorId" onclick="tabFunction(event, @cActorId)">Student</li>
+                                            ; break;
+                                        }
+                                    case 11:
+                                        {
+                                            <li @Html.Raw(Convert.ToInt64(Context.Session.GetString("session_currentActiveActorTab")) == 11 ? "class=\"tablinks active\"" : "class=\"tablinks\"")
+                                                data-actorId="@cActorId" onclick="tabFunction(event, @cActorId)">Admin</li>
+                                            ; break;
+                                        }
+
+                                    case 12:
+                                        {
+                                            <li @Html.Raw(Convert.ToInt64(Context.Session.GetString("session_currentActiveActorTab")) == 12 ? "class=\"tablinks active\"" : "class=\"tablinks\"")
+                                                data-actorId="@cActorId" onclick="tabFunction(event, @cActorId)">Register</li>
+                                            ; break;
+                                        }
+                                    case 13:
+                                        {
+                                            <li @Html.Raw(Convert.ToInt64(Context.Session.GetString("session_currentActiveActorTab")) == 13 ? "class=\"tablinks active\"" : "class=\"tablinks\"")
+                                                data-actorId="@cActorId" onclick="tabFunction(event, @cActorId)">Accountant</li>
+                                            ; break;
+                                        }
+                                    case 14:
+                                        {
+                                            <li @Html.Raw(Convert.ToInt64(Context.Session.GetString("session_currentActiveActorTab")) == 14 ? "class=\"tablinks active\"" : "class=\"tablinks\"")
+                                                data-actorId="@cActorId" onclick="tabFunction(event, @cActorId)">Teacher</li>
+                                            ; break;
+                                        }
+                                }
+                            };
+
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+

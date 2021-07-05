@@ -1,0 +1,336 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StudentPaymentsVM.IndexStudentPaymentsListVM;
+<h1 class="page-title">Student Payment List</h1>
+<br />
+<button class="btn btn-success btn-sm " id="btnSearch" name="btnSearch" data-toggle="modal" data-target="#mdlSearch">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    Search
+</button>
+
+<button class="btn btn-success btn-sm " id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#mdlAdd">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+
+<div id="mdlSearch" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Search By Student Id</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="StudentPayments" asp-action="StudentListOfStudentPayment" method="get">
+                    <p>
+                        <input type="number" name="StudentId" required class="form-control" /><br />
+
+                        <button class="btn btn-success btn-md" id="btnSaveNewStudentPaymentSearch">
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                            sumbit
+                        </button>
+                        <button class="btn btn-danger btn-md " data-dismiss="modal">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            Cancel
+                        </button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pull-right">
+    <a id="Print_AssignedSubjects" class="btn btn-default hidden-print"
+       href="@Url.Action("PrintStudentPaymentsList", "StudentPayments")"
+       target="_blank">
+        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+        Print
+    </a>
+</div>
+
+<br />
+<br />
+
+@if (Model._StudentPayments.Count == 0)
+{
+    <br />
+    <br />
+    <div class="well"><b>No record has been matched according to selection.</b></div>
+}
+
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>PaymentDate </th>
+                <th>StudentId </th>
+                <th>StudentName </th>
+                <th>FeeType </th>
+                <th>Fine </th>
+                <th>PaidAmount </th>
+                <th>Remarks </th>
+                <th>  Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model._StudentPayments)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._StudentPayments.IndexOf(data) + 1)</td>
+
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.PaymentDate)
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.StudentId
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.StudentName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.FeeType
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Fine
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.PaidAmount
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Remarks
+                    </td>
+
+                    <td class="showDetails pointer" style="max-width:88px;">
+
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                data-id="@data.Id"
+                                data-paymentdate="@String.Format("{0:dd-MMM-yyyy}",data.PaymentDate)"
+                                data-studentid="@data.StudentId"
+                                data-studentname="@data.StudentName"
+                                data-feetypeid="@data.FeeTypeId"
+                                @*data-amountid="@data.StudnetDiscountId" *@
+                                data-fine="@data.Fine"
+                                data-paidamount="@data.PaidAmount"
+                                data-remarks="@data.Remarks">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div id="mdlAdd" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add student Payment</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="addStudentPayment">
+                    <label> PaymentDate</label>
+                    <input type="text" name="StudentPayments.PaymentDate" id="AddPaymentDate" required class="form-control datetime">
+                    <hr />
+                    <label> FeeType</label>
+                    <select class="form-control"
+                            id="FeeTypeId"
+                            asp-for-id="FeeTypeId"
+                            name="StudentPayments.FeeTypeId"
+                            asp-items="@(new SelectList (ViewBag.ddlFeeType, "Id","Name"))">
+                        <option value="Select Fee Type">Select Fee Type</option>
+                    </select>
+                    <hr />
+                    <label> Fine</label>
+                    <input type="number" name="StudentPayments.Fine" id="Fine" required class="form-control">
+                    <hr />
+                    <label> PaidAmount</label>
+                    <input type="number" name="StudentPayments.PaidAmount" id="PaidAmount" required class="form-control">
+                    <hr />
+                    <label> Remarks</label>
+                    <input type="text" name="StudentPayments.Remarks" id="Remark" required class="form-control">
+
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewStudentPayment">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit student's payment</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editStudentPayment">
+                    <input type="hidden" name="StudentPayments.Id" id="editStudentPaymentId">
+                    <label> PaymentDate</label>
+                    <input type="text" name="StudentPayments.PaymentDate" id="txtEditPaymentDate" required class="form-control datetime">
+                    <hr />
+                    <label> StudentId</label>
+                    <input type="number" name="StudentPayments.StudentId" id="txtEditStudentId" required class="form-control ">
+
+                    <hr />
+                    <label> FeeType</label>
+                    <select class="form-control"
+                            id="txtEditFeeTypeId"
+                            asp-for-id="FeeTypeId"
+                            name="StudentPayments.FeeTypeId"
+                            asp-items="@(new SelectList (ViewBag.ddlFeeType, "Id","Name"))">
+                        <option value="Select Fee Type">Select Fee Type</option>
+                    </select>
+                    <hr />
+
+                    <label> Fine</label>
+                    <input type="number" name="StudentPayments.Fine" id="txtEditFine" required class="form-control ">
+                    <hr />
+                    <label> PaidAmount</label>
+                    <input type="number" name="StudentPayments.PaidAmount" id="txtEditPaidAmount" required class="form-control ">
+                    <hr />
+                    <label> Remarks</label>
+                    <input type="text" name="StudentPayments.Remarks" id="txtEditRemarks" required class="form-control ">
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditStudentPayment">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Payments Record</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteStudentPaymentList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="StudentPaymentId" id="delStudentPaymentid">
+                    <button class="btn btn-md btn-success" id="btnDeleteStudentPayment">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        
+        $('tr td #btnEdit').on('click', function () {
+            $("#editStudentPaymentId").val($(this).data("id"));
+            $("#txtEditPaymentDate").val($(this).data("paymentdate"));
+            $("#txtEditStudentId").val($(this).data("studentid"));
+            $("#txtEditFeeTypeId").val($(this).data("feetypeid"));
+            $("#txtEditStudnetDiscountId").val($(this).data("amountid"));
+            $("#txtEditFine").val($(this).data("fine"));
+            $("#txtEditPaidAmount").val($(this).data("paidamount"));
+            $("#txtEditRemarks").val($(this).data("remarks"));
+        });
+        $("#btnSaveNewStudentPayment").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#addStudentPayment")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertStudentPayment", "StudentPayments", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+        $("#btnEditStudentPayment").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#editStudentPayment")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("UpdateStudentPayment", "StudentPayments")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delStudentPaymentid").val($(this).data("id"));
+        });
+        $("#btnDeleteStudentPayment").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#deleteStudentPaymentList")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteStudentPayment", "StudentPayments")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+    </script>
+}

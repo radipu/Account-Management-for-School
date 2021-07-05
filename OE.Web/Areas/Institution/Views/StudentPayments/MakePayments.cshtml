@@ -1,0 +1,57 @@
+﻿<!--[Rahul - update 27Apr21]-->
+@model OE.Web.Areas.Institution.Models.StudentPaymentsVM.IndexMakePaymentsVM
+<h1 class="page-title">Make a Payment</h1>
+<!--[Rahul - update 28Apr21]-->
+
+<a class="btn btn-primary btn-sm"
+   asp-area="Institution"
+   asp-controller="StudentPayments"
+   asp-action="SearchPaymentDetailById2">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+    Go Back
+</a>
+<br />
+<br />
+<!--[~Rahul - update 28Apr21]-->
+<h5>Make your payment with this bKash Merchant Account Number: 01XXXXXXXXX</h5>
+<br />
+<br />
+<button class="btn btn-success btn-sm" id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#myModal">
+    <i class="fa fa-mobile" aria-hidden="true"></i>
+    Pay with bKash
+</button>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add a Payment with bKash</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="addPayment">
+                    <label>Enter Amount</label>
+                    <input type="text" required class="form-control" placeholder="Enter paying amount" />
+                    <label>Enter Sender Mobile</label>
+                    <input type="text" required class="form-control" placeholder="Enter sender mobile number"  />
+                    <label>Enter TransactionId</label>
+                    <input type="text" required class="form-control" placeholder="Enter transactionId" />
+                    <label>Enter Reference No</label>
+                    <input type="text" required class="form-control" placeholder="Enter reference no" />
+                    <label>Enter Counter No</label>
+                    <input type="text" required class="form-control" placeholder="Enter counter no" />
+                </form>
+                <hr />
+                <button class="btn btn-success btn-sm" id="btnPay">
+                    <i class="fa fa-save" aria-hidden="true"></i>
+                    Pay
+                </button>
+                <button class="btn btn-danger btn-sm" data-dismiss="modal">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--[~Rahul - update 27Apr21]-->

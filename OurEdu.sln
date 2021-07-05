@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OE.Web", "OE.Web\OE.Web.csproj", "{BCEBB993-E05C-4BF5-BC44-B11B46C978D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OE.Data", "OE.Data\OE.Data.csproj", "{F5990C51-B369-4E5F-9586-918A17D15B0C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OE.Repo", "OE.Repo\OE.Repo.csproj", "{A470C7C0-6AD9-45AB-9677-5040E75636CF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OE.Service", "OE.Service\OE.Service.csproj", "{7816A971-FC4A-453E-A3ED-225996E5E901}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BCEBB993-E05C-4BF5-BC44-B11B46C978D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCEBB993-E05C-4BF5-BC44-B11B46C978D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCEBB993-E05C-4BF5-BC44-B11B46C978D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCEBB993-E05C-4BF5-BC44-B11B46C978D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5990C51-B369-4E5F-9586-918A17D15B0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5990C51-B369-4E5F-9586-918A17D15B0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5990C51-B369-4E5F-9586-918A17D15B0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5990C51-B369-4E5F-9586-918A17D15B0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A470C7C0-6AD9-45AB-9677-5040E75636CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A470C7C0-6AD9-45AB-9677-5040E75636CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A470C7C0-6AD9-45AB-9677-5040E75636CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A470C7C0-6AD9-45AB-9677-5040E75636CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7816A971-FC4A-453E-A3ED-225996E5E901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7816A971-FC4A-453E-A3ED-225996E5E901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7816A971-FC4A-453E-A3ED-225996E5E901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7816A971-FC4A-453E-A3ED-225996E5E901}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8811D009-616D-40F7-AC2B-C00EF8E6D4CC}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://dev.azure.com/oureduaccountingproject
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = OE.Service\\OE.Service.csproj
+		SccProjectName1 = OE.Service
+		SccLocalPath1 = OE.Service
+		SccProjectUniqueName2 = OE.Web\\OE.Web.csproj
+		SccProjectName2 = OE.Web
+		SccLocalPath2 = OE.Web
+		SccProjectUniqueName3 = OE.Data\\OE.Data.csproj
+		SccProjectName3 = OE.Data
+		SccLocalPath3 = OE.Data
+		SccProjectUniqueName4 = OE.Repo\\OE.Repo.csproj
+		SccProjectName4 = OE.Repo
+		SccLocalPath4 = OE.Repo
+	EndGlobalSection
+EndGlobal

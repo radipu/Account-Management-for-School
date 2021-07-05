@@ -1,0 +1,401 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StudentDiscountsVM.IndexStudentDiscountsListVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Students Discount List</h1>
+<br />
+<button type="button" class="btn btn-success btn-sm" id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#myModal">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+
+<br />
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!--modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Add Discount</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!--modal body-->
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="addStudentDiscount">
+
+                    <label>Registration No</label>
+                    <input type="text" name="StudentDiscounts.RegistrationNo" id="RegistrationNo" required class="form-control" placeholder="Enter student registration no">
+                    <hr />
+
+                    <label> Class </label>
+                    <select class="form-control"
+                            id="addClassId"
+                            asp-for-id="ClassId"
+                            name="StudentDiscounts.ClassId"
+                            asp-items="@(new SelectList(ViewBag.ddlClass, "Id", "Name"))">
+                        <option value="Select Class">Select Class</option>
+                    </select>
+                    <hr />
+                    <label> FeeType </label>
+                    <select class="form-control" id="addFeeTypeId" name="StudentDiscounts.FeeTypeId" asp-for-id="Id" asp-items="@(new SelectList (String.Empty, "Id","Name"))"></select>
+                    <hr />
+
+                    <label> Discount Amout </label>
+                    <input type="number" name="StudentDiscounts.DiscountAmout" id="DiscountAmount" required class="form-control" placeholder="Enter discount amount">
+
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewStudentDiscount">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="fa-pull-right">
+    <a id="Print_AssignedSubjects" class="btn btn-default hidden-print"
+       href="@Url.Action("PrintStudentDiscountsList", "StudentDiscounts")"
+       target="_blank">
+        <i class="fa fa-print" aria-hidden="true"></i>
+        Print
+    </a>
+</div>
+
+@if (Model._StudentDiscounts.Count() == 0)
+{
+    <div class="well"><b>No Record </b></div>
+}
+
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>Registration No </th>
+                <th>StudentName </th>
+                <th>Class </th>
+                <th>FeeType </th>
+                <th>DiscountAmout </th>
+                <th>  Action </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var data in Model._StudentDiscounts)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._StudentDiscounts.IndexOf(data) + 1)</td>
+
+                    <td class="showDetails pointer">
+                        @data.RegistrationNo
+                    </td>
+
+                    <td class="showDetails pointer">
+                        @data.StudentName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.ClassName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.FeeType
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.DiscountAmout
+                    </td>
+                    <td style="max-width:30px;">
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                data-id="@data.Id"
+                                data-registration="@data.RegistrationNo"
+                                data-studentname="@data.StudentName"
+                                data-classid="@data.ClassId"
+                                data-feetypeid="@data.FeeTypeId"
+                                data-feetype="@data.FeeType"
+                                data-discountamout="@data.DiscountAmout">
+
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="container">
+    @if (pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-center">
+            @if (pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="StudentDiscounts" asp-action="StudentDiscountsList" asp-route-pg="1">First</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="StudentDiscounts" asp-action="StudentDiscountsList" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+            @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+            {
+                <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                    <a class="page-link" asp-controller="StudentDiscounts" asp-action="StudentDiscountsList" asp-route-pg="@pge">@pge</a>
+                </li>
+            }
+            @if (pager.CurrentPage < pager.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="StudentDiscounts" asp-action="StudentDiscountsList" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="StudentDiscounts" asp-action="StudentDiscountsList" asp-route-pg="@(pager.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+
+</div>
+
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit discount</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editStudentDiscount">
+                    <input type="hidden" name="StudentDiscounts.Id" id="editStudentDiscountId">
+                    <label>Registration NO</label>
+                    <input type="text" name="StudentDiscounts.RegistrationNo" id="txtEditRegistrationNo" required class="form-control">
+                    <hr />
+                    <label> Class </label>
+                    <select class="form-control"
+                            id="textEditClassId"
+                            asp-for-id="ClassId"
+                            name="StudentDiscounts.ClassId"
+                            asp-items="@(new SelectList(ViewBag.ddlClass, "Id", "Name"))">
+                        <option value="Select Class">Select Class</option>
+                    </select>
+                    <hr />
+                    <label> FeeType</label>
+                    <select class="form-control" id="editFeeTypeId" name="StudentDiscounts.FeeTypeId" asp-for-id="Id" asp-items="@(new SelectList (String.Empty, "Id","Name"))"></select>
+                    <hr />
+                    <hr />
+                    <label>DiscountAmout</label>
+                    <input type="text" name="StudentDiscounts.DiscountAmout" id="txtEditDiscountAmout" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditStudentDiscount">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Student Discount</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteStudentPaymentList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="StudentDiscountId" id="delStudentPaymentId">
+                    <button class="btn btn-md btn-success" id="btnDeleteStudentPayment">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#editStudentDiscountId").val($(this).data("id"));
+            $("#txtEditRegistrationNo").val($(this).data("registration"));
+            $("#textEditClassId").val($(this).data("classid"));
+            $("#txtEditFeeTypeId").val($(this).data("feetypeid"));
+            $("#txtEditDiscountAmout").val($(this).data("discountamout"));
+            var _classId = $(this).data('classid');
+            var feeUrl = '@Url.Action("DropDown_FeeTypes", "StudentDiscounts", new { Area = "Institution" })';
+            $.getJSON(feeUrl, { ddlClassId: _classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = '<option value="">Select Fee Types</option>';
+                    $("#modalEdit #editFeeTypeId").empty();
+                    $.each(jsonResult, function (i, row) {
+                        if (row.value == _classId) {
+                            item += "<option value='" + row.value + "' selected='selected'>" + row.text + "</option>";
+                        } else
+                            item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#modalEdit #editFeeTypeId').html(item);
+                }
+            });
+
+        });
+
+        $("#addClassId").on('change', function () {
+            var url = '@Url.Action("DropDown_FeeTypes", "StudentDiscounts", new { Area = "Institution" })';
+            var classId = $('#addClassId').val();
+
+          if (classId != 0) {
+            $.getJSON(url, {ddlClassId: classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = "<option value=''>Select Fee Types</option>";
+                    $("#addFeeTypeId").empty();
+                    $.each(jsonResult, function (i, row) {
+                        item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#addFeeTypeId').html(item);
+
+                }
+                else {
+                    $('#addFeeTypeId').html("<option value=''>Select Fee Types</option>");
+
+                }
+            })
+          }
+          else {
+            $('#addFeeTypeId').html("<option value=''>Select Fee Types</option>");
+
+          }
+        });
+        $("#textEditClassId").on('change', function () {
+            var url = '@Url.Action("DropDown_FeeTypes", "StudentDiscounts", new { Area = "Institution" })';
+            var classId = $('#textEditClassId').val();
+
+         if (classId != 0) {
+            $.getJSON(url, {ddlClassId: classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = "<option value=''>Select Fee Types</option>";
+                    $("#modalEdit #editFeeTypeId").empty();
+                    $.each(jsonResult, function (i, row) {
+                        item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#modalEdit #editFeeTypeId').html(item);
+
+                }
+                else {
+                    $('#modalEdit #editFeeTypeId').html("<option value=''>Select Fee Types</option>");
+
+                }
+            })
+         }
+         else {
+            $('#modalEdit #editFeeTypeId').html("<option value=''>Select Fee Types</option>");
+
+         }
+        });
+
+        $("#btnSaveNewStudentDiscount").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#addStudentDiscount")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("InsertStudentDiscount", "StudentDiscounts", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+        $("#btnEditStudentDiscount").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#editStudentDiscount")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("UpdateStudentDiscount", "StudentDiscounts")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delStudentPaymentId").val($(this).data("id"));
+        });
+
+        $("#btnDeleteStudentPayment").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#deleteStudentPaymentList")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteStudentDiscount", "StudentDiscounts")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+    </script>
+}

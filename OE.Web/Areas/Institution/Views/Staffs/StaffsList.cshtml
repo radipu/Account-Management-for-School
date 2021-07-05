@@ -1,0 +1,284 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StaffsVM.IndexStaffsListVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Staffs List</h1>
+<br />
+<br />
+@if (Model._Staffs.Count() == 0)
+{
+    <div class="well"><b>No Record </b></div>
+}
+
+
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>  Staff image </th>
+                <th> Designation</th>
+                <th>  Gender </th>
+                <th>  Cell </th>
+                <th>  Email </th>
+                <th>  Education </th>
+                <th>  Address </th>
+                <th>  Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model._Staffs)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._Staffs.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer text-center">
+                        <img src="~/@data.IP300X200" asp-append-version="true" style="height:120px;width:120px;" />
+                        @data.Name
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Designation
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.GenderName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Cell
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Email
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Education
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Address
+                    </td>
+                    <td style="max-width:30px;">
+                        <a class="btn btn-primary btn-sm"
+                           asp-area="Institution"
+                           asp-controller="Staffs"
+                           asp-action="StaffsListByAccountant"
+                           asp-route-StaffId="@data.Id">
+                            <i class="fa fa-external-link-alt" aria-hidden="true"></i>
+                            View Details
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="container">
+    @if (pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-center">
+            @if (pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Staffs" asp-action="StaffsList" asp-route-pg="1">First</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="Staffs" asp-action="StaffsList" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+            @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+            {
+                <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                    <a class="page-link" asp-controller="Staffs" asp-action="StaffsList" asp-route-pg="@pge">@pge</a>
+                </li>
+            }
+            @if (pager.CurrentPage < pager.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Staffs" asp-action="StaffsList" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="Staffs" asp-action="StaffsList" asp-route-pg="@(pager.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+
+</div>
+
+<div id="mdlAdd" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Staff</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="addStaff">
+                    <label> Designation </label>
+                    <select class="form-control"
+                            id="DesignationId"
+                            asp-for-id="DesignationId"
+                            name="Staffs.DesignationId"
+                            asp-items="@(new SelectList (ViewBag.ddlDesignations, "Id","Name"))">
+                        <option value="Select Designation">Select Designation</option>
+                    </select><br />
+                    <label> FirstName</label>
+                    <input type="text" name="Staffs.FirstName" id="ClassName" required class="form-control"><br />
+                    <label> LastName</label>
+                    <input type="text" name="Staffs.LastName" id="LastName" required class="form-control"><br />
+                    <label>
+                        Image :
+                        <a tabindex="0" data-toggle="popover" data-trigger="focus" data-container="body" title="Tip: Image Upload" data-content="Standard image size for Students: Width= 300px Height= 200px.">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        </a>
+                    </label>
+                    <input type="file" name="Staffs.fleImage" id="fleAddIP300X200" class="form-control">
+                    <span id="errAddMsg" class="alert-danger"></span>
+                    <br />
+                    <div id="addImagBlock" style="display:none">
+                        <img id="fleAddImgPreView" src="" style="width:200px; height:150px; border:10px;" asp-append-version="true"><br /><br />
+                        <a href="#" class="btn btn-danger" onclick="ClrAddPreview()"><i class="glyphicon glyphicon-trash"></i></a>
+                        <br />
+                    </div>
+                    <label>Gender</label>
+                    <select class="form-control"
+                            id="GenderId"
+                            asp-for-id="GenderId"
+                            name="Staffs.GenderId"
+                            asp-items="@(new SelectList (ViewBag.ddlGenders, "Id","Name"))">
+                        <option value="Select Gender">Select Gender</option>
+                    </select>
+                    <hr />
+                    <label> Cell</label>
+                    <input type="text" name="Staffs.Cell" id="Cell" required class="form-control"><br />
+                    <label> Email</label>
+                    <input type="text" name="Staffs.Email" id="Email" required class="form-control"><br />
+                    <label>Education</label>
+                    <input type="text" name="Staffs.Education" id="txtEditEducation" required class="form-control"><br />
+                    <label> Address</label>
+                    <input type="text" name="Staffs.Address" id="Address" required class="form-control"><br />
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewStaff">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $('tr td #btnEdit').on('click', function () {
+            $("#editStaffId").val($(this).data("id"));
+            $("#txtEditDesignationId").val($(this).data("designationid"));
+            $("#txtEditFirstName").val($(this).data("firstname"));
+            $("#txtEditLastName").val($(this).data("lastname"));
+            $("#txtEditIP300X200").val($(this).data("ip300x200"));
+            $("#txtEditGenderId").val($(this).data("genderid"));
+            $("#txtEditCell").val($(this).data("cell"));
+            $("#txtEditEmail").val($(this).data("email"));
+            $("#txtEditAddress").val($(this).data("address"));
+            var imageVersionNo = Math.random();
+            var imageWithVersion = "/" + $(this).data('ip300x200') + "?v=" + imageVersionNo;
+            $('#modalEdit #editIP300X200').attr('src', imageWithVersion); //[NOTE: for Display]
+        });
+
+        $('#fleEditIP300X200').on('change', function () {
+            var imageFile = window.URL.createObjectURL(this.files[0]);
+            $('#modalEdit #editIP300X200').attr('src', imageFile);   //[NOTE: for Display]
+            $('#modalEdit #editIP300X200').show();
+            $('#modalEdit #txtEditIP300X200').val(imageFile.FileName); //[NOTE: for hidden]
+        });
+        var ClrEditPreview = function () {
+            $("#editImagBlock").hide();
+            $("#fleEditIP300X200").val('');
+            $('#txtEditIP300X200').val('');
+        }
+        $('#fleAddIP300X200').on('change', function () {
+            var imageFile = window.URL.createObjectURL(this.files[0]);
+            $('#mdlAdd #fleAddImgPreView').attr('src', imageFile);   //[NOTE: for Display]
+            $('#mdlAdd #addImagBlock').show();
+        });
+
+        $("#btnSaveNewStaff").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#addStaff")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertStaff", "Staffs", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+        $("#btnEditStaff").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#editStaff")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("UpdateStaff", "Staffs")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delStaffid").val($(this).data("id"));
+        });
+
+        $("#btnDeleteStaff").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#deleteStaffList")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteStaff", "Staffs")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+    </script>
+}

@@ -1,0 +1,119 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StudentPaymentsVM.IndexPaymentDetailByIdVM;
+<h1 class="page-title">My Payment List</h1>
+<br />
+<!--[Rahul - update 27Apr21]-->
+<div class="fa-pull-right">
+    <a id="Print_AssignedSubjects" class="btn btn-default hiddine-print"
+       href="@Url.Action("PrintStudentPaymentsList", "StudentPayments")"
+       target="_blank">
+        <i class="fa fa-print" aria-hidden="true"></i>
+        Print
+    </a>
+</div>
+<!--[~Rahul - update 27Apr21]-->
+
+<!--[Rahul - update 27Apr21]-->
+<a class="btn btn-success btn-sm" id="btnAdd" name="btnAdd"
+   asp-area="Institution"
+   asp-controller="StudentPayments"
+   asp-action="MakePayments">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Make Payment
+</a>
+<!--[~Rahul - update 27Apr21]-->
+<br />
+<br />
+<h4><b>Registration No: </b> @Model.RegistrationId</h4>
+<h4><b>Name:</b> @Model.StudentSearchName</h4>
+<h4><b>Total Have to Pay:</b> @Model.TotalHavetoPay</h4>
+<h4><b>Total Paid:</b> @Model.TotalPaid</h4>
+<h4><b>Total Fine:</b> @Model.TotalFine</h4>
+<h4>
+    <b>Due:</b>
+    @{
+        decimal? due = Model.TotalHavetoPay - Model.TotalPaid;
+    }
+    @due
+</h4>
+
+@*@if (Model._PaidList == null)*@
+@if (Model._StudentPayments == null)
+{
+    <h4 style="color:red;">@ViewBag.Message</h4>
+    <h4>Payment information not found</h4>
+}
+
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>Fee<br />Date </th>
+                <th>Class<br />Name </th>
+                <th>Fee<br />Type </th>
+                <th>Term<br />No </th>
+                <th>Fee<br />Amount </th>
+                <th>Paid<br />Amount </th>
+                <th>Payment Date </th>
+                <th>Remarks </th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model._StudentPayments)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._StudentPayments.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @data.FeeYearDate.Value.Year
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.ClassName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.FeeType
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.TermName (@data.TermNo)
+                    </td>
+                    <td class="showDetails pointer">
+                        <label>Fee Amount: @data.Amount</label>
+                        <br />
+                        <label>Fine: @data.Fine</label>
+                        <br />
+                        <label>Disount: @data.Discount</label>
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.PaidAmount
+                    </td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.PaymentDate)
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Remarks
+                    </td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+
+
+@section Scripts
+    {
+    <script type="text/javascript">
+            
+
+       
+
+       
+
+    </script>
+}
+

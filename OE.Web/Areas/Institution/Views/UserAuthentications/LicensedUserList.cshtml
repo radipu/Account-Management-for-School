@@ -1,0 +1,384 @@
+﻿@model OE.Web.Areas.Institution.Models.UserAuthenticationsVM.IndexUserAuthenticationsVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+
+<h1 class="page-title">All User</h1>
+<div class="container-fluid">
+    <!--<button type="button" class="btn btn-success">+Add User</button>-->
+    <!--button to add the modal-->
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+        Add User
+    </button>
+    <br />
+    <br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>Name</th>
+                <th>ActorId</th>
+                <th>OurEdu Id</th>
+                <th>IsActive</th>
+                <th class=".col-">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model.OELicensedUsersListVMs)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model.OELicensedUsersListVMs.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @data.UserName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.ActorId
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.OurEduId
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.IsActive
+                    </td>
+                    <td style="max-width:30px;">
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                data-id="@data.Id"
+                                data-userId="@data.UserId"
+                                data-oureduid="@data.OurEduId"
+                                data-password="@data.Password"
+                                data-actorid="@data.ActorId"
+                                data-firstname="@data.FirstName"
+                                data-lastname="@data.LastName"
+                                data-genderid="@data.GenderId"
+                                data-email="@data.Email"
+                                data-contact="@data.Contact"
+                                data-valid="@data.IsActive">
+                            <span class="glyphicon glyphicon-edit" style="vertical-align:middle;margin-top: -5px"></span>
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                            <span class="glyphicon glyphicon-trash" style="vertical-align:middle;margin-top: -5px"></span>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    <div class="container">
+        @if (pager.TotalPages > 0)
+        {
+            <ul class="pagination justify-content-center">
+                @if (pager.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="UserAuthentications" asp-action="LicensedUserList" asp-route-pg="1">First</a>
+                    </li>
+                    <li>
+                        <a class="page-link" asp-controller="UserAuthentications" asp-action="LicensedUserList" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                    </li>
+                }
+                @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+                {
+                    <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                        <a class="page-link" asp-controller="UserAuthentications" asp-action="LicensedUserList" asp-route-pg="@pge">@pge</a>
+                    </li>
+                }
+                @if (pager.CurrentPage < pager.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="UserAuthentications" asp-action="LicensedUserList" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                    </li>
+                    <li>
+                        <a class="page-link" asp-controller="UserAuthentications" asp-action="LicensedUserList" asp-route-pg="@(pager.TotalPages)">Last</a>
+                    </li>
+                }
+            </ul>
+        }
+
+    </div>
+
+    <!--the modal-->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!--modal header-->
+                <div class="modal-header">
+                    <h4 class="modal-title">Add New User</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!--modal body-->
+                <form enctype="multipart/form-data" id="addUser">
+                    <div class="modal-body">
+                        <label>OurEdu ID</label>
+                        <input type="text" name="users.OurEduID" id="AddOurEduID" required class="form-control" placeholder="Enter OurEduId" />
+                        <label>Password</label>
+                        <input type="password" name="users.Password" id="AddPassword" required class="form-control" placeholder="Create a password" />
+                        <label>Actor Type</label>
+                        <select class="form-control"
+                                id="ActorId"
+                                asp-for-id="ActorId"
+                                name="UserAuthentications.ActorId"
+                                asp-items="@(new SelectList (ViewBag.ddlActors, "Id","Name"))">
+                            <option value="Select  Actor">Select  Actor</option>
+                        </select>
+                        <label>First Name</label>
+                        <input type="text" name="users.FirstName" id="AddFirstName" required class="form-control" placeholder="Enter user first name" />
+                        <label>Last Name</label>
+                        <input type="text" name="users.LastName" id="AddLastName" required class="form-control" placeholder="Enter user last name" />
+                        <label>Gender</label>
+                        <select class="form-control"
+                                id="GenderId"
+                                asp-for-id="GenderId"
+                                name="Users.GenderId"
+                                asp-items="@(new SelectList (ViewBag.ddlGender, "Id","Name"))">
+                            <option value="Select  Gender">Select  Gender</option>
+                        </select>
+                        <label>Email</label>
+                        <input type="email" name="users.Email" id="AddEmail" required class="form-control" placeholder="Enter user email address" />
+                        <label>Contact</label>
+                        <input type="number" name="users.Contact" id="AddContact" required class="form-control" placeholder="Enter user contact no" />
+                        <label>IsActive</label>
+                        <input type="checkbox" name="users.IsActive" id="AddIsActive" value="true" checked="checked" />
+                        <hr />
+                        <button class="btn btn-success btn-md" id="btnSaveNewUser">
+                            <i class="fa fa-save" aria-hidden="true"></i>
+                            Save
+                        </button>
+                        <button class="btn btn-danger btn-md " data-dismiss="modal">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="modalEdit" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit User</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form role="form" id="editLicesedUser">
+                        <input type="hidden" name="UserAuthenticationId" id="editUserAuthenticationId">
+                        <input type="hidden" name="users.UserId" id="editUserId">
+                        <label> OurEdu Id</label>
+                        <input type="text" name="users.OurEduId" id="textEditOurEduId" required class="form-control">
+                        <hr />
+                        <label> Password</label>
+                        <input type="password" name="users.Password" id="textEditPassword" required class="form-control">
+                        <hr />
+                        <label> Actor</label>
+                        <select disabled class="form-control"
+                                id="textEditActorId"
+                                asp-for-id="ActorId"
+                                name="usersAuthentications.ActorId"
+                                asp-items="@(new SelectList (ViewBag.ddlActors, "Id","Name"))">
+                            <option value="Select  Actor">Select  Actor</option>
+                        </select>
+                        <hr />
+                        <label> FirstName</label>
+                        <input type="text" name="users.FirstName" id="textEditFirstName" required class="form-control">
+                        <hr />
+                        <label> LastName</label>
+                        <input type="text" name="users.LastName" id="textEditLastName" required class="form-control">
+                        <hr />
+                        <label> Gender</label>
+                        <select class="form-control"
+                                id="textEditGenderId"
+                                asp-for-id="GenderId"
+                                name="Users.GenderId"
+                                asp-items="@(new SelectList (ViewBag.ddlGender, "Id","Name"))">
+                            <option value="Select  Gender">Select  Gender</option>
+                        </select>
+                        <hr />
+                        <label> Email</label>
+                        <input type="email" name="users.EmailAddress" id="textEditEmailAddress" required class="form-control">
+                        <hr />
+                        <label> Contact</label>
+                        <input type="number" name="users.ContactNo" id="textEditContactNo" required class="form-control">
+                        <hr />
+                        <label> IsActive</label>
+                        <input type="checkbox" name="users.IsActive" id="textEditIsActive" value="true">
+                        <hr />
+                        <button class="btn btn-success btn-md" formmethod="post" id="btnEditLicensedUser">
+                            <span class="glyphicon glyphicon-ok" style="vertical-align:middle; margin-top: -5px"></span>
+                            Save
+                        </button>
+                        <button class="btn btn-danger btn-md " data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove" style="vertical-align:middle; margin-top: -5px"></span>
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalDelete" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete the User</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form enctype="multipart/form-data" id="deleteLicensedUserList">
+                    <div class="modal-body">
+                        <p><h3>Are you sure you want to delete this?</h3></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="LicensedId" id="delUserid">
+                        <button class="btn btn-md btn-success" id="btnDeleteUser">
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                            Yes
+                        </button>
+                        <button class="btn btn-danger btn-md " data-dismiss="modal">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            No
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--[Rahul - update 20Apr21]-->
+    <div id="modalMessage" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirmation Message</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p><h3 id="txtMessage" style="color:red"></h3></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger btn-md" onclick="location.reload()" data-dismiss="modal">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Ok
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--[~Rahul - update 20Apr21]-->
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+    $("#btnSaveNewUser").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addUser")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+                 url: '@Url.Action("InsertLicensedUser", "UserAuthentications", new { Area = "Institution" })',
+
+                 success: function (response) {
+                     /*[Rahul - delete 20Apr21]*/
+                     /*location.reload();*/
+                     /*[~Rahul - delete 20Apr21]*/
+                 
+                 /*[Rahul -update 20Apr21]*/
+                     if (response.success == true) {
+                         $('#txtMessage').text(response.message);
+                         $('#modalMessage').modal('show');
+                     }
+                     else {
+                         $('#txtMessage').text(response.message);
+                         $('#modalMessage').modal('show');
+                     }
+                     /*[~Rahul -update 20Apr21]*/
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+             });
+    });
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#editUserAuthenticationId").val($(this).data("id"));
+            $("#editUserId").val($(this).data("userid"));
+            $("#textEditOurEduId").val($(this).data("oureduid"));
+            $("#textEditPassword").val($(this).data("password"));
+            $("#textEditActorId").val($(this).data("actorid"));
+            $("#textEditFirstName").val($(this).data("firstname"));
+            $("#textEditLastName").val($(this).data("lastname"));
+            $("#textEditGenderId").val($(this).data("genderid"));
+            $("#textEditEmailAddress").val($(this).data("email"));
+            $("#textEditContactNo").val($(this).data("contact"));
+
+            var valid = $(this).data("valid");
+            if (valid == "True") {
+                $('#textEditIsActive').prop('checked', true);
+            } else {
+                $('#textEditIsActive').prop('checked', false);
+            }
+
+        });
+
+         $("#btnEditLicensedUser").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#editLicesedUser")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("UpdateLicensedUser", "UserAuthentications")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delUserid").val($(this).data("id"));
+        });
+        $("#btnDeleteUser").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#deleteLicensedUserList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteLicensedUser", "UserAuthentications")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+    </script>
+}

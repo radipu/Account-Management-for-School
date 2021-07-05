@@ -1,0 +1,93 @@
+﻿
+@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutReport.cshtml";
+}
+
+@model OE.Web.Areas.Institution.Models.ExpensesVM.IndexExpensesListVM;
+
+<br />
+<h3 class="page-title">Expenses List</h3>
+<br />
+<br />
+@if (Model._Expenses.Count() == 0)
+{
+    <div class="well"><b>No Record has been matched according to selection.</b></div>
+}
+else
+{
+    @*<div class="watermark print-watermark">
+        <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="print-logo" />
+    </div>*@
+    <br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="max-width:10px;">SN</th>
+                <th>Paying Date </th>
+                <th>Expense type </th>
+                <th>Amount </th>
+                <th>Reason of Expense </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model._Expenses)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._Expenses.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.Date)
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.ExpenseTypeName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Amount
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Name
+                    </td>
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    @if (Model.StartDate != null && Model.EndDate != null)
+    {
+        <h5><b>Starting Date:@Model.StartDate</b></h5>
+        <h5><b>Ending Date:@Model.EndDate</b></h5>
+        <h5><b> Total Expenses : @Model.ammount taka </b></h5>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th style="max-width:10px;">SN</th>
+                    <th>Paying Date </th>
+                    <th>Expense type </th>
+                    <th>Amount </th>
+                    <th>Reason of Expense </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model._Expenses)
+                {
+                    <tr>
+                        <td style="max-width:10px;">@(Model._Expenses.IndexOf(data) + 1)</td>
+                        <td class="showDetails pointer">
+                            @String.Format("{0:dd-MMM-yyyy}", data.Date)
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.ExpenseTypeName
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.Amount
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.Name
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

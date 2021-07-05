@@ -1,0 +1,145 @@
+﻿@model OE.Web.Areas.Institution.Models.UsersVM.IndexUsersVM
+<h1 class="page-title">Change User Login</h1>
+<form>
+    <div class="form-group">
+        <label for="email">New user login id:</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter your email" name="email">
+        @Html.Raw(ViewData["result"])
+    </div>
+    <button type="submit" class="btn btn-primary" id="btnVerificationCode">
+        Get verification code
+    </button><p>(After clicking check your email)</p>
+    <div class="form-group">
+        <label for="text">Verification code:</label>
+        <input type="text" class="form-control" id="code" placeholder="Enter your verification code" name="code">
+    </div>
+    <div class="form-group">
+        <label for="pwd">New Password:</label>
+        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="Password">
+        <input type="hidden" name="Id" id="Id" value="@Model.users.Id" />
+    </div>   
+    <button type="submit" class="btn btn-primary" id="btnCheckCode">
+        Save
+    </button>
+   
+    <button class="btn btn-md btn-danger" data-dismiss="modal">
+        <i class="fas fa-times" aria-hidden="true"></i>
+        Cancel
+    </button>
+
+</form>
+<div id="modalMessage" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">                
+                <h4 class="modal-title">Message</h4>
+               
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+               
+            </div>
+            <div class="modal-body text-center text-danger">
+
+                <div id="wait" style="display:none;">
+                    <img src="~/DataDictionary/images/loader/loader.gif" style="background-color:white;" width="64" height="64" />
+                    <br>Loading..
+                </div>
+                <br />
+                <p><h3 id="txtMessage" style="color:black"></h3></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-info btn-md " data-dismiss="modal" id="btnClose_Message">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                    Close
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+
+    <script type="text/javascript">
+
+        //JS for auto load values into reset form
+        $("#btnVerificationCode").on('click', function (e) {
+            e.preventDefault();
+            var email = $('input#email').val();
+            $.ajax({
+                type: 'POST',
+                data: { email: email },
+                dataType: 'json',
+                cache: false,
+               url: '@Url.Action("EmailVerification", "Users", new { Area = "Institution" })',               
+                beforeSend:
+                    function () {
+                        $("#modalMessage #wait").show();
+                        $('#modalMessage').modal();
+                    },               
+                success:
+                    function (data) {                       
+                        $("#modalMessage #wait").hide();
+                        $('#modalMessage').modal();                      
+                        if (data.success == true) {                          
+                            $('#txtMessage').text(data.message);
+                            $('#modalMessage').modal('show');
+
+                            //[NOTE:  email will be display after modal]
+                            $('#email').text(data.email);
+                        }
+                        if (data.success == false) {
+                            $('#txtMessage').text(data.message);
+                            $('#modalMessage').modal('show');
+                        }
+                    },
+                error: function (data) {
+                },
+                complete: function (data) {
+                }
+             });
+        });
+               
+        $("#btnCheckCode").on('click', function (e) {
+            e.preventDefault();
+            var email = $('input#email').val();
+            var code = $('input#code').val();
+            var Id = $('input#Id').val();
+            var Password = $('input#pwd').val();
+            $.ajax({
+                type: 'POST',
+                data: { code: code, Id: Id, Password: Password, email: email },
+                dataType: 'json',
+                cache: false,
+               url: '@Url.Action("CheckingVerificationForNewLogin", "Users", new { Area = "Institution" })',
+                success:
+                    function (data) {
+                        if (data.success == true) {  
+
+                            $('#txtMessage').text(data.message);
+                            $('#modalMessage').modal('show');
+
+                            $('#email').text(data.email);
+                            
+                           
+                        }
+                        if (data.success == false) {
+                            $('#txtMessage').text(data.message);
+                            $('#modalMessage').modal('show');
+                        }
+                    },
+                error: function (data) {
+                },
+                complete: function (data) {
+                }
+             });
+        });
+        $("#btnClose_Message").on('click', function (e) {
+            $('#txtMessage').text("");
+            $('#modalMessage').modal('hide');
+        });
+       
+    </script>
+}
+
+<!-- #endregion  "All Scripts"-->

@@ -1,0 +1,110 @@
+﻿
+@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutReport.cshtml";
+}
+@model OE.Web.Areas.Institution.Models.ExpensesVM.PrintIndexExpensesListVM;
+<div class="informationArea">
+    <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="center-block" />
+    <h3 class="text-center"> @Model.Institution.Name</h3>
+    <h4 class="text-center">@Model.Institution.Email</h4>
+    <h4 class="text-center">@Model.Institution.ContactNo</h4>
+    <hr />
+</div>
+<div class="watermark print-watermark">
+    <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="print-logo" />
+</div>
+@if (Model.StartDate != null && Model.EndDate != null)
+{
+    <h5><b>Starting Date:@Model.StartDate</b></h5>
+    <h5><b>Ending Date:@Model.EndDate</b></h5>
+    <h5><b> Total Expenses : @Model.ammount taka </b></h5>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="max-width:10px;">SN</th>
+                <th>Paying Date </th>
+                <th>Expense type </th>
+                <th>Amount </th>
+                <th>Reason of Expense </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model._Expenses)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._Expenses.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.Date)
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.ExpenseTypeName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Amount
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Name
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#editClassesId").val($(this).data("id"));
+            $("#txtEditDate").val($(this).data("date"));
+            $("#txtEditExpenseTypeName").val($(this).data("expenseTypeName"));
+            $("#txtEditAmount").val($(this).data("amount"));
+            $("#txtEditName").val($(this).data("name"));
+
+        });
+        $("#btnEditClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#editClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("UpdateExpense", "Expenses")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delclassid").val($(this).data("id"));
+        });
+        $("#btnDeleteClass").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#deleteClassList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteExpense", "Expenses")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+    </script>
+}

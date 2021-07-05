@@ -1,0 +1,190 @@
+﻿
+@model OE.Web.Areas.Institution.Models.SalariesVM.IndexSalariesListVM;
+<h1 class="page-title"> Salary List</h1>
+<br />
+
+<a class="btn btn-primary btn-sm"
+   asp-area="Institution"
+   asp-controller="Salaries"
+   asp-action="InsertFormPage">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Provide salary
+</a>
+<br />
+<br />
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="max-width:10px;">SN</th>
+            <th>Staff Id</th>
+            <th>Staff Name</th>
+            <th>Payment Date </th>
+            <th>Amount </th>
+            <th>Remark </th>
+            <th style="max-width:30px;">  Action </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var data in Model._Salaries)
+        {
+            <tr>
+                <td style="max-width:10px;">
+                    @(Model._Salaries.IndexOf(data) + 1)
+                </td>
+                <td class="showDetails pointer">
+                    @data.StaffId
+                </td>
+                <td class="showDetails pointer">
+                    @data.StaffName
+                </td>
+                <td class="showDetails pointer">
+                    @String.Format("{0:dd-MMM-yyyy}", data.Date)
+                </td>
+                <td class="showDetails pointer">
+                    @data.Amount
+                </td>
+                <td class="showDetails pointer">
+                    @data.Remark
+                </td>
+                <td style="max-width:30px;">
+                    <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                            data-id="@data.Id"
+                            data-staffid="@data.StaffId"
+                            data-date="@String.Format("{0:dd-MMM-yyyy}", data.Date)"
+                            data-amount="@data.Amount"
+                            data-remark="@data.Remark">
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                        Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editClasses">
+                    <input type="hidden" name="Salaries.Id" id="editClassesId">
+                    <label> StaffId</label>
+                    <select class="form-control"
+                            id="StaffId"
+                            asp-for-id="StaffId"
+                            name="Salaries.StaffId"
+                            asp-items="@(new SelectList (ViewBag.ddlStaffs, "Id","Id"))">
+                        <option value=""></option>
+                    </select><hr />
+                    <label> Date</label>
+                    <input type="text" name="Salaries.Date" id="txtEditDate" required class="form-control datetime">
+                    <hr />
+                    <label> Amount</label>
+                    <input type="number" name="Salaries.Amount" id="txtEditAmount" required class="form-control">
+                    <hr />
+                    <label> Remark</label>
+                    <input type="text" name="Salaries.Remark" id="txtEditRemark" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditClasses">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Salary</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteClassList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="SalaryId" id="delclassid">
+                    <button class="btn btn-md btn-success" id="btnDeleteClass">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        
+        $('tr td #btnEdit').on('click', function () {
+            $("#editClassesId").val($(this).data("id"));
+            $("#StaffId").val($(this).data("staffid"));
+            $("#txtEditDate").val($(this).data("date"));
+            $("#txtEditAmount").val($(this).data("amount"));
+            $("#txtEditRemark").val($(this).data("remark"));
+        });
+        $("#btnEditClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#editClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+                 processData: false,
+                 url: '@Url.Action("UpdateSalary", "Salaries")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delclassid").val($(this).data("id"));
+        });
+        $("#btnDeleteClass").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#deleteClassList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+                 url: '@Url.Action("DeleteSalary", "Salaries")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+    </script>
+}
+

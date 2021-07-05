@@ -1,0 +1,283 @@
+﻿@if (ViewBag.OeErrorMessage != null)
+{
+    @ViewBag.OeErrorMessage;
+    return;
+}
+@using Microsoft.AspNetCore.Http
+@model OE.Web.Areas.Institution.Models.UserAuthenticationsVM.IndexUserAuthenticationsVM
+<h1 class="page-title">Staff Licenses</h1>
+<br />
+
+
+    <a id="Print_AssignedSubjects" class="btn btn-info btn-sm float-sm-right"
+       href="@Url.Action("PrintOELicense", "Users")"
+       target="_blank">
+        <i class="fas fa-print" aria-hidden="true"></i>
+        Print
+    </a>
+
+<br />
+<br />
+<br />
+
+<br />
+<br />
+@if (Model._UsersLicensesList.Count() == 0)
+{
+    <div class="well"><b>No staff license has been created yet.</b></div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover oePage_backend" id="tblGetOELicense">
+            <thead>
+                <tr>
+                    <th class="oeTableTitle">Name</th>
+                    <th class="oeTableTitle">OurEdu Id</th>
+                    <th class="oeTableTitle"> ActorType(s) </th>
+                    <th class="oeTableTitle"> IsPassword </th>
+                    <th class="oeTableTitle">Action </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model._UsersLicensesList)
+                {
+                    string Icon_Ok = "<i class=" + "\"fa fa-check \"" + "style =" + " \"font-size:20px;color:green\"" + "></i>";
+                    string Icon_No = "<i class=" + "\"fa fa-times \"" + "style =" + " \"font-size:20px;color:red;\"" + "></i>";
+                   
+                <tr>
+                    <td class="showDetails pointer">
+                        <img id="IP300X200" src="~/@item.Users.IP300X200" asp-append-version="true" style="height:80px;width:80px;" />
+                        <br />
+                        @item.Users.FirstName @item.Users.LastName
+                    </td>
+                    <td class="showDetails pointer">
+                        @item.Users.OurEduId
+                    </td>
+                    <td class="showDetails pointer">
+                        <table class="table-bordered table-condensed">
+                            <tbody>
+                                @foreach (var _2ndItem in item._userAuthenticationList)
+                                {
+                                    <tr>
+                                        <td style="background-color:blanchedalmond"> @Html.Raw(_2ndItem.IsActive != true ? Icon_No : Icon_Ok) @_2ndItem.ActorName </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        @Html.Raw(item.Users.Password != null ? Icon_Ok : Icon_No)
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" id="btnNew" data-toggle="modal" data-target="#mdlAdd" data-oureduid="@item.Users.OurEduId" data-userid="@item.Users.Id">
+                            <i class="fas fa-plus" aria-hidden="true"></i>
+                            Add Actor
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" @(item._userAuthenticationList.Count() == 0 ? "disabled" : "") data-toggle="modal" data-target="#mdlModify" id="btnEdit" data-oureduid="@item.Users.OurEduId" data-userid="@item.Users.Id">
+                            <i class="fas fa-edit" aria-hidden="true"></i>
+                            Edit
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-sm" @(item._userAuthenticationList.Count() == 0 ? "disabled" : "") id="btnSaveSendPassword" formmethod="post" data-oureduid="@item.Users.OurEduId" data-userid="@item.Users.Id">
+                            <i class="fas fa-edit" aria-hidden="true"></i>
+                            Send Password
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<div id="mdlAdd" class="modal">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">                
+                <h3>Add Actor</h3>               
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+               
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="addActors" class="form-horizontal">
+                    <div class="row">
+                        <div class="text-center"><h3 id="OurEduId"></h3></div>
+                    </div>
+                    <br />
+
+                    <input type="hidden" name="UserAuthentications.UserId" id="txtAddUserId" value="" />
+                    @{ if (Context.Session.GetString("session_currentActiveActorTab") == "1" || Context.Session.GetString("session_currentActiveActorTab") == "11")
+                        {
+                            <label>Actor*:</label>
+                            <select class="form-control"
+                                    id="ddlAddActorId"
+                                    asp-for-id="ddlAddActorId"
+                                    name="UserAuthentications.ActorId"
+                                    asp-items="@(new SelectList (ViewBag.ddlActors, "Id","Name"))"></select>
+                        }
+                    }
+                    <br />
+
+                    <label class="checkbox-inline">
+                        <input type="checkbox" value="true" name="UserAuthentications.IsActive" id="addIsActive" checked="checked">
+                        Is Active
+                    </label>
+
+                    <br />
+                    <hr />                    
+                    <button id="btnSaveNewActors" type="button" class="btn btn-success btn-md" formmethod="post">
+                        <i class="fas fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>                   
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="mdlModify" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">                
+                <h3>Edit Actors</h3>              
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+               
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="text-center"><h3 id="editOurEduId"></h3></div>
+                </div>
+                <br />
+                <div class="row text-center" id="ActorsList">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-md " data-dismiss="modal">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="MessageBox" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-center" id="exampleModalLongTitle">Message</h3>
+            </div>
+            <div class="modal-body text-center text-danger">               
+                <div id="wait" style="display:none;">
+                    <img src="~/DataDictionary/images/loader/loader.gif" style="background-color:white;" width="64" height="64" />
+                    <br>Loading..
+                </div>
+                <br />                
+                <h3 id="msg"></h3>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion  "All Modals"-->
+<!-- #region "All Scripts" -->
+
+@section Scripts
+    {
+
+    <script type="text/javascript">
+
+        //[NOTE:Saving new data]
+        var url = '@Url.Action("ActorsForEdit", "Users")';
+        $('tr td #btnEdit').on("click", function () {
+            $("#editOurEduId").text("OurEduId: " + $(this).data("oureduid"));
+
+            var userId = $(this).data("userid");
+            $('#mdlModify #ActorsList').load(url, { UserId: userId});
+        });
+        $("#mdlModify").on("hidden.bs.modal", function () {
+            location.reload();
+        });
+
+        $("#mdlModify").on("hidden.bs.modal", function () {
+            location.reload();
+        });
+
+        $("tr td #btnNew").on("click", function () {
+            $("#OurEduId").text("OurEduId: " + $(this).data("oureduid"));
+            $("#txtAddUserId").val($(this).data("userid"));
+        });
+        $("#btnSaveNewActors").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addActors")[0]);
+            $.ajax({
+                type: 'POST',
+                data: formData,
+                contentType: false,
+               processData: false,
+
+               url: '@Url.Action("AddActors", "Users", new { Area = "Institution" })',
+                success: function (data) {
+                    if (data.message == null || data.message == "") {
+                         location.reload();
+                     }
+                    else {
+                        $('#msg').text(data.message);
+                         $('#MessageBox').modal();
+                     }
+                 },
+                 error: function () {
+                 },
+                 complete: function () {
+                 }
+                });
+         });       
+        $("tr td #btnSaveSendPassword").click(function (e) {
+            e.preventDefault();
+
+            var ourEduId = $(this).data('oureduid');;
+            var userId = $(this).data('userid');;
+            alert(ourEduId);
+            $.ajax({
+                type: 'POST',
+                data: { ourEduId: ourEduId, userId: userId },
+                dataType: 'json',
+                cache: false,
+               url: '@Url.Action("SendPassword", "Users", new { Area = "Institution" })',               
+                beforeSend:
+                    function () {
+                        $("#MessageBox #wait").show();
+                        $('#MessageBox').modal();
+                    },              
+                success:
+                    function (data) {                        
+                        $("#wait").hide();
+                        $('#MessageBox').modal();                       
+                        if (data.success == true) {
+                            $('#msg').text(data.message);
+                            $('#MessageBox').modal();
+                        }
+                        if (data.success == false) {
+                            $('#msg').text(data.message);
+                            $('#MessageBox').modal();
+                        }
+                    },
+                error: function (data) {
+                },
+                complete: function (data) {
+                }
+             });
+        });       
+    </script>
+}
+
+<!-- #endregion  "All Scripts"-->

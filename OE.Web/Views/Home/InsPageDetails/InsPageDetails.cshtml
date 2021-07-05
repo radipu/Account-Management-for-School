@@ -1,0 +1,38 @@
+﻿
+@if (ViewBag.OeErrorMessage != null)
+{
+    @ViewBag.OeErrorMessage;
+}
+else
+{
+    @model OE.Web.Models.IndexInsPageDetailsVM
+
+    @if (Model == null)
+    {
+        <h2 class="text-danger">There is no description</h2>
+    }
+    else
+    {
+        <div class="container">
+            <h1 class="page-title">@Model.InsPageTitle</h1>
+            <div class="col-sm-8">
+                <div class="content clearfix">
+                    <div class="page-area">
+                        @if (Model.IP600X400 != null)
+                        {
+                            <img src="~/@Html.Raw(Model.IP600X400)" asp-append-version="true" class="img-rounded img-responsive">
+                        }
+                        <br />
+
+                        <!--Note:Message description-->
+                        @foreach (var data in Model.InsPageDetailsList)
+                        {
+                            <h3>@data.Title</h3>
+                            <p style="text-align:justify">@Html.Raw(data.Description)</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

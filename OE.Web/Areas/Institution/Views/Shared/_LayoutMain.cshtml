@@ -1,0 +1,257 @@
+﻿
+@using Microsoft.AspNetCore.Http;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Html.Raw(Context.Session.GetString("session_loginInstitutionName"))</title>
+    <link rel="shortcut icon" href="~/@Html.Raw(Context.Session.GetString("session_loginInstitutionFavicon"))">
+
+    <environment names="Development">
+        <!--[NOTE:Default CSS Files]-->
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />       
+        <link rel="stylesheet" href="~/css/site.css" />
+        <link href="~/DataDictionary/FontAwesome/css/all.css" rel="stylesheet" />
+
+
+        <!--<script src="~/lib/jquery/dist/jquery.js"></script>--> <!--[NOTE:should be here. findout the issue later]-->
+        <!--[NOTE:New CSS Files]-->
+        <link href="~/DataDictionary/css/cssBackend/menu_backend.css" rel="stylesheet" />
+        <link href="~/DataDictionary/css/cssBackend/page_backend.css" rel="stylesheet" />
+        <link href="~/DataDictionary/css/cssBackend/site_backend.css" rel="stylesheet" />
+
+        <!--[NOTE: Stepper  CSS for stepper]-->
+        <link href="~/DataDictionary/Steppers/css/bootstrap-steppers.css" rel="stylesheet" />
+
+        <!--[NOTE: SummerNoter  CSS for MsWord Textbox]-->
+        <link href="~/DataDictionary/SummerNote/css/summernote.css" rel="stylesheet" />
+
+        <!--[NOTE: DateTimePicker  CSS for dateTime]-->
+        <link href="~/DataDictionary/DateTimePicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+
+        <!--[NOTE: dateDropdowns  CSS for date of birth date]-->
+        <link href="~/DataDictionary/DateDropdowns/css/date-dropdowns.css" rel="stylesheet" />
+        <!--[NOTE: dataTables CSS Paging and sorting]-->
+        <link rel="stylesheet" href="~/DataDictionary/DataTables/css/datatables.css" type="text/css" />
+
+    </environment>
+
+    <environment names="Staging,Production">
+        <!--[NOTE:Default CSS Files]-->
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+        <link href="~/DataDictionary/FontAwesome/css/all.css" rel="stylesheet" />
+
+        <!--<script src="~/lib/jquery/dist/jquery.js"></script>--> <!--[NOTE:should be here. findout the issue later]-->
+        <!--[NOTE:New CSS Files]-->
+        <link href="~/DataDictionary/css/cssBackend/menu_backend.css" rel="stylesheet" />
+        <link href="~/DataDictionary/css/cssBackend/page_backend.css" rel="stylesheet" />
+        <link href="~/DataDictionary/css/cssBackend/site_backend.css" rel="stylesheet" />
+
+        <!--[NOTE: SummerNoter  CSS for MsWord Textbox]-->
+        <link href="~/DataDictionary/SummerNote/css/summernote.min.css" rel="stylesheet" />
+
+        <!--[NOTE: Stepper  CSS for stepper]-->
+        <link href="~/DataDictionary/Steppers/css/bootstrap-steppers.min.css" rel="stylesheet" />
+
+        <!--[NOTE: DateTimePicker  CSS for dateTime]-->
+        <link href="~/DataDictionary/DateTimePicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+
+        <!--[NOTE: dateDropdowns  CSS for date of birth date]-->
+        <link href="~/DataDictionary/DateDropdowns/css/date-dropdowns.css" rel="stylesheet" />
+        <!--[NOTE: dataTables CSS Paging and sorting]-->
+        <link rel="stylesheet" href="~/DataDictionary/DataTables/css/datatables.css" type="text/css" />
+    </environment>
+
+</head>
+
+<body id="layout-backend">
+    <header>
+        <partial name="_headerMain_d" />
+    </header>
+    <div class="row">
+        <div class="container-fluid no-padding">
+            <div class="clearfix"></div>
+            @foreach (var cActorId in Context.Session.GetString("session_currentUserAuthentications").Split(';'))
+            {
+                if (cActorId == "")
+                {
+                    break;
+                }
+
+                string CurrentActiveActorId = Context.Session.GetString("session_currentActiveActorTab");
+                if (CurrentActiveActorId == cActorId)
+                {
+                    <section class="content-section">
+                        <div class="row">
+                            <div id="@cActorId" class="container-fluid tabcontent first">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-6 col-md-4 col-xl-4 col-xs-6 left-bar">
+
+                                            @await Html.PartialAsync("~/Areas/Institution/Views/Shared/_menuMain_d.cshtml", new ViewDataDictionary(ViewData) { { "actorId", @cActorId } })
+
+
+
+                                        </div>
+
+
+                                        <div class="col-6 col-md-8 col-xl-8 col-xs-6 right-content">
+                                            @RenderBody()
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="clearfix"></div>
+
+                }
+            }
+
+        </div>
+    </div>
+
+
+    <environment names="Development">
+        <!--[NOTE: Default js files]-->
+        <!--<script src="~/lib/jquery/dist/jquery.js"></script>--> <!--[NOTE:should be here. findout the issue later]-->
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/DataDictionary/FontAwesome/js/all.js"></script>
+        
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+       
+        <!--[NOTE: popper js for popover]-->
+        <script src="~/DataDictionary/Popper/js/popper.min.js"></script>        
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
+        <!--[NOTE: SummerNote js for MsWord Textbox]-->
+        <script src="~/DataDictionary/SummerNote/js/summernote.js"></script>
+
+        <!--[NOTE: DateTimePicker js for dateTime]-->
+        <script src="~/DataDictionary/DateTimePicker/js/moment.js"></script>
+        <script src="~/DataDictionary/DateTimePicker/js/bootstrap-datetimepicker.js"></script>
+
+        <!--[NOTE: dateDropdowns for Date of Birth]-->
+        <script src="~/DataDictionary/DateDropdowns/js/jquery.date-dropdowns.js"></script>
+
+        <!--[NOTE: Table Paging and sorting]-->
+        <script src="~/DataDictionary/DataTables/js/datatables.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <!--[NOTE: Default js files]-->
+        <!--<script src="~/lib/jquery/dist/jquery.js"></script>--> <!--[NOTE:should be here. findout the issue later]-->
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/DataDictionary/FontAwesome/js/all.min.js"></script>
+
+        <!--[NOTE: popper js for popover]-->
+        <script src="~/DataDictionary/Popper/js/popper.min.js"></script>
+
+        @*<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <!--[NOTE: SummerNote js for MsWord Textbox]-->
+        <script src="~/DataDictionary/SummerNote/js/summernote.js"></script>
+
+
+        <!--[NOTE: DateTimePicker js for dateTime]-->
+        <script src="~/DataDictionary/DateTimePicker/js/moment.js"></script>
+        <script src="~/DataDictionary/DateTimePicker/js/bootstrap-datetimepicker.js"></script>
+
+
+        <!--[NOTE: dateDropdowns for Date of Birth]-->
+        <script src="~/DataDictionary/DateDropdowns/js/jquery.date-dropdowns.js"></script>
+        <!--[NOTE: Table Paging and sorting]-->
+        <script src="~/DataDictionary/DataTables/js/datatables.js"></script>
+    </environment>
+
+    <script type="text/javascript">
+        //sticky tabs
+        window.onscroll = function () {
+            stickyFunction()
+        };
+
+        var navbar = document.getElementById("fit");
+        var sticky = navbar.offsetTop;
+
+        function stickyFunction() {
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add("sticky")
+            } else {
+                navbar.classList.remove("sticky");
+            }
+        }
+        //tabs
+        function tabFunction(tabNo, tabID) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            tabNo.currentTarget.className += " active";
+
+            $.ajax({
+                type: 'POST',
+                data: { 'CurrentActorTabId': tabID },
+                url: '@Url.Action("SetCurrentActorTab", "Users", new { Area = "Institution" })',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    var returnData = data.actorId;
+                    if (returnData == -1) { window.location.href = "/Institution/Users/Index"; } //[NOTE: user Tab]
+                    else if (returnData == 10) { window.location.href = "/Institution/StudentPayments/SearchPaymentDetailById2"; } //[NOTE: Student Tab]
+                    else if (returnData == 11) { window.location.href = "/Institution/Classes/ClassList"; } //[NOTE: Admin Tab]
+                    else if (returnData == 12) { window.location.href = "/Institution/AssignedSections/AssignedSections"; } //[NOTE: Register Tab]
+                    else if (returnData == 13) { window.location.href = "/Institution/Students/StudentsByAccountant"; } //[NOTE: Accountant Tab]
+                    else if (returnData == 14) { window.location.href = "/Institution/AssignedTeachers/GetCoursesList"; } //[NOTE: Teacher Tab]
+                    else { window.location.href = "/Institution/Users/Index"; }
+
+                }
+
+            });
+
+
+        }
+        //dropdown Menu
+        var dropdown = document.getElementsByClassName("dropdown-btn");
+        var dr;
+
+        for (dr = 0; dr < dropdown.length; dr++) {
+            dropdown[dr].addEventListener("click", function () {
+                this.classList.toggle("active");
+
+            });
+        };
+               
+        $(".menu-item").on('click', function (e) {
+
+            var currentMenuName = this.id;
+            $.ajax({
+                type: 'POST',
+                data: { 'ActiveMenuName': currentMenuName },
+                url: '@Url.Action("SetActiveMenu", "Users", new { Area = "Institution" })',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+
+                }
+
+            });
+        });
+       
+    </script>
+
+    @RenderSection("Scripts", required: false)
+
+
+</body>
+</html>

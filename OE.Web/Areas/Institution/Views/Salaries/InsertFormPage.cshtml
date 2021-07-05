@@ -1,0 +1,76 @@
+﻿
+@model OE.Web.Areas.Institution.Models.SalariesVM.IndexSalariesListVM;
+
+<div id="mdlAdd" class=" ">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="content">
+            <div class="header">
+                <h3>Provide Salary</h3>
+                <a class="btn btn-primary btn-sm"
+                   asp-area="Institution"
+                   asp-controller="Salaries"
+                   asp-action="SalariesList">
+                    <i class="fa fa-external-link-alt" aria-hidden="true"></i>
+                    View Records
+                </a>
+            </div><br />
+            <div class="body">
+                <form enctype="multipart/form-data" id="addClasses">
+                    <hr />
+                    <label> StaffId</label>
+                    <select class="form-control"
+                            id="StaffId"
+                            asp-for-id="StaffId"
+                            name="Salaries.StaffId"
+                            asp-items="@(new SelectList (ViewBag.ddlStaffs, "Id","Id"))">
+                        <option value="Select Staff Id">Select Staff Id</option>
+                    </select><hr />
+                    <label> date</label>
+                    <input type="text" name="Salaries.date" id="ClassName" required class="form-control datetime">
+                    <hr />
+                    <label> Amount</label>
+                    <input type="number" name="Salaries.Amount" id="ClassName" required class="form-control">
+                    <hr />
+                    <label> Remark</label>
+                    <input type="text" name="Salaries.Remark" id="ClassName" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewClasses">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Submit
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">        
+
+        $("#btnSaveNewClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+                 url: '@Url.Action("InsertSalary", "Salaries", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+    </script>
+}

@@ -1,0 +1,246 @@
+﻿
+@model OE.Web.Areas.Institution.Models.SalaryIncrementsVM.IndexSalaryIncrementsListVM;
+
+<h1 class="page-title">Salary increment List</h1>
+
+<br />
+<button class="btn btn-success btn-sm " id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#mdlAdd">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+<br />
+<br />
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="max-width:10px;">SN</th>
+            <th>StaffId </th>
+            <th>DesigignationId </th>
+            <th>PayScalesId </th>
+            <th>Date </th>
+            <th>Amount </th>
+            <th style="max-width:30px;">  Action </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var data in Model._SalaryIncrements)
+        {
+            <tr>
+                <td style="max-width:10px;">@(Model._SalaryIncrements.IndexOf(data) + 1)</td>
+                <td class="showDetails pointer">
+                    @data.StaffId
+                </td>
+                <td class="showDetails pointer">
+                    @data.DesigignationId
+                </td>
+                <td class="showDetails pointer">
+                    @data.PayScalesId
+                </td>
+                <td class="showDetails pointer">
+                    @String.Format("{0:dd-MMM-yyyy}", data.Date)
+                </td>
+                <td class="showDetails pointer">
+                    @data.Amount
+                </td>
+                <td style="max-width:30px;">
+                    <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                            data-id="@data.Id"
+                            data-name="@data.StaffId"
+                            data-expenseTypeId="@data.DesigignationId"
+                            data-details="@data.PayScalesId"
+                            data-Date="@String.Format("{0:dd-MMM-yyyy}","@data.Date")"
+                            data-Amount="@data.Amount">
+
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                        Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="mdlAdd" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add </h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="addClasses">
+                    <label> staff Id</label>
+                    <input type="number" name="SalaryIncrements.StaffId" id="ClassName" required class="form-control">
+                    <hr />
+                    <label> designation Id </label>
+                    <input type="number" name="SalaryIncrements.DesigignationId" id="ClassName" required class="form-control">
+                    <hr />
+                    <hr />
+                    <label> PayScalesId</label>
+                    <input type="number" name="SalaryIncrements.PayScalesId" id="ClassName" required class="form-control">
+                    <hr />
+                    <label> Date</label>
+                    <input type="text" name="SalaryIncrements.Date" id="ClassName" required class="form-control datetime">
+                    <hr />
+                    <label> Amount</label>
+                    <input type="number" name="SalaryIncrements.Amount" id="ClassName" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewClasses">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editClasses">
+                    <input type="hidden" name="SalaryIncrements.Id" id="editClassesId">
+                    <label> staff Id</label>
+                    <input type="text" name="SalaryIncrements.StaffId" id="txtEditClassesName" required class="form-control">
+                    <hr />
+                    <label> designation Id</label>
+                    <input type="text" name="SalaryIncrements.DesigignationId" id="txtEditClassesName" required class="form-control">
+                    <hr />
+                    <label> PayScalesId</label>
+                    <input type="text" name="SalaryIncrements.PayScalesId" id="txtEditClassesName" required class="form-control">
+                    <hr />
+                    <label> Date</label>
+                    <input type="text" name="SalaryIncrements.Date" id="txtEditClassesName" required class="form-control datetime">
+                    <hr />
+                    <label> Amount</label>
+                    <input type="number" name="SalaryIncrements.Amount" id="txtEditClassesName" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditClasses">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Salary Increment</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteClassList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="SalaryIncrementId" id="delclassid">
+                    <button class="btn btn-md btn-success" id="btnDeleteClass">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        
+        $('tr td #btnEdit').on('click', function () {
+            $("#editClassesId").val($(this).data("id"));
+            $("#txtEditClassesName").val($(this).data("name"));
+
+        });
+
+        $("#btnSaveNewClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertSalaryIncrement", "SalaryIncrements", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+
+        $("#btnEditClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#editClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("UpdateSalaryIncrement", "SalaryIncrements")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delclassid").val($(this).data("id"));
+        });
+
+        $("#btnDeleteClass").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#deleteClassList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteSalaryIncrement", "SalaryIncrements")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+    </script>
+}

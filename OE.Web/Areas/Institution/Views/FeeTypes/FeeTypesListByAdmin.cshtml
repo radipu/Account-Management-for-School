@@ -1,0 +1,302 @@
+﻿
+@model OE.Web.Areas.Institution.Models.FeeTypesVM.IndexFeeTypesListByAdminVM;
+<h1 class="page-title">Fee type List</h1>
+<br />
+<button class="btn btn-success btn-sm " id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#mdlAdd">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+
+<button class="btn btn-success btn-sm " id="btnSearch" name="btnSearch" data-toggle="modal" data-target="#mdlSeach">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    Search
+</button>
+
+<div id="mdlSeach" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Search Class and date wise</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="FeeTypes" asp-action="SearchFeeTypes" method="get">
+                    <select class="form-control"
+                            id="ClassId"
+                            asp-for-id="ClassId"
+                            name="SearchFeetypeClassId"
+                            asp-items="@(new SelectList (ViewBag.ddlClass, "Id","Name"))">
+                        <option value="Select  Class">Select  Class</option>
+                    </select><br />
+                    <button class="btn btn-success btn-md" id="btnSearch">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model._FeeTypes.Count == 0)
+{
+    <br />
+    <br />
+    <div class="well"><b>No record has been matched according to selection.</b></div>
+}
+
+else
+{
+    <div class="pull-right">
+        <a id="Print_AssignedSubjects" class="btn btn-default hidden-print"
+           href="@Url.Action("PrintFeeTypesList", "FeeTypes")"
+           target="_blank">
+            <i class="fa fa-print" aria-hidden="true"></i>
+            Print
+        </a>
+    </div>
+    <br />
+    <br />
+    @if (Model.SearchFeetypeClassId != null)
+    {
+        <h4><b>Class:@Model.SearchClassName</b></h4>
+    }
+    <br />
+    <br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>  Class  </th>
+                <th>Fee Name</th>
+                <th>  IsActive </th>
+                <th>  Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model._FeeTypes)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._FeeTypes.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @data.ClassName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Name
+                    </td>
+                    <td class="showDetails pointer">
+                        @if (data.IsActive == true)
+                        {
+                            <h>Yes</h>
+                        }
+                        else
+                        {
+                            <h>No</h>
+                        }
+                    </td>
+                    <td style="max-width:30px;">
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                data-id="@data.Id"
+                                data-classid="@data.ClassId"
+                                data-name="@data.Name"
+                                data-valid="@data.IsActive">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div id="mdlAdd" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add new fee type</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="addClasses">
+                    <label> Class </label>
+                    <select class="form-control"
+                            id="ClassId"
+                            asp-for-id="ClassId"
+                            name="FeeTypes.ClassId"
+                            asp-items="@(new SelectList (ViewBag.ddlClass, "Id","Name"))">
+                        <option value="Select Student Class">Select Student Class</option>
+                    </select>
+                    <label>Type Name</label>
+                    <input type="text" name="FeeTypes.Name" id="ClassName" required class="form-control"><br />
+                    <label> YearlyTermNo</label>
+                    <input type="number" name="FeeTypes.YearlyTermNo" id="ClassName" required class="form-control">
+                    <hr />
+                    <label> IsActive</label>
+                    <input type="checkbox" name="FeeTypes.IsActive" id="ClassName" value="True"><br />
+                    <button class="btn btn-success btn-md" id="btnSaveNewClasses">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Types</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editClasses">
+                    <input type="hidden" name="FeeTypes.Id" id="editClassesId">
+                    <label>Class </label>
+                    <select class="form-control"
+                            id="txtEditClassId"
+                            asp-for-id="ClassId"
+                            name="FeeTypes.ClassId"
+                            asp-items="@(new SelectList (ViewBag.ddlClass, "Id","Name"))">
+                        <option value="Select Student Class">Select Student Class</option>
+                    </select><br />
+                    <label>Types Name</label>
+                    <input type="text" name="FeeTypes.Name" id="txtEditClassesName" required class="form-control"><br />
+                    <label>Yearly Term No</label>
+                    <input type="number" name="FeeTypes.YearlyTermNo" id="txtEditTermNo" required class="form-control">
+                    <hr />
+                    <label>IsActive</label>
+                    <input type="checkbox" name="FeeTypes.IsActive" id="txtEditIsActive" value="True"><br />
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditClasses">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Fee Type</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteClassList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="FeeTypeId" id="delclassid">
+                    <button class="btn btn-md btn-success" id="btnDeleteClass">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $('tr td #btnEdit').on('click', function () {
+            $("#editClassesId").val($(this).data("id"));
+            $("#txtEditClassId").val($(this).data("classid"));
+            $("#txtEditTermNo").val($(this).data("yearlytermno"));
+            $("#txtEditClassesName").val($(this).data("name"));
+            var valid = $(this).data("valid");
+            if (valid == "True") {
+                $('#txtEditIsActive').prop('checked', true);
+            } else {
+                $('#txtEditIsActive').prop('checked', false);
+            }
+        });
+        $("#btnSaveNewClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertFeeType", "FeeTypes", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+        $("#btnEditClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#editClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("UpdateFeeType", "FeeTypes")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+         $(' tr td #btnDelete').on('click', function () {
+            $("#delclassid").val($(this).data("id"));
+        });
+        $("#btnDeleteClass").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#deleteClassList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteFeeType", "FeeTypes")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+    </script>
+}

@@ -1,0 +1,546 @@
+﻿
+<style>
+
+    .profile-img img {
+        width: 70%;
+        height: 100%;
+    }
+
+    .profile-img:hover .file {
+        position: relative;
+        overflow: hidden;
+        margin-top: -10%;
+        width: 70%;
+        border: none;
+        border-radius: 0;
+        font-size: 15px;
+        background: #008000;
+        display: block;
+    }
+
+    .file {
+        display: none;
+    }
+
+
+    .profile-img .file input {
+        position: absolute;
+        opacity: 0;
+        right: 0;
+        top: 0;
+    }
+
+    .row:hover .edit {
+        display: block;
+    }
+
+    .edit {
+        padding-top: 7px;
+        padding-right: 7px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        display: none;
+    }
+
+        .edit a {
+            color: #000;
+        }
+
+    .upload {
+        position: relative;
+        flex: 1 1 0%;
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        height: 74px;
+        justify-content: center;
+        min-width: 84px;
+        padding: 16px;
+        text-align: center;
+    }
+
+        .upload i {
+            /*background-image: url(/rsrc.php/v3/yv/r/mQRTxWYqEPo.png);*/
+            background-size: 22px 66px;
+            background-repeat: no-repeat;
+            display: inline-block;
+            height: 20px;
+            width: 20px;
+            margin-bottom: -2px;
+        }
+
+    .photoup {
+        display: inline-block;
+        margin-left: 6px;
+        color: #4b4f56;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 20px;
+    }
+
+        .photoup input {
+            display: none;
+        }
+
+    input.cropit-image-input {
+        visibility: hidden;
+    }
+</style>
+@model OE.Web.Areas.Institution.Models.UsersVM.IndexUsersVM
+<h1 class="page-title">Profile</h1>
+<br\>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="profile-img">
+                <img src="~/@Model.users.IP300X200" asp-append-version="true" alt="User Profile Picture" />
+
+                <div class="file">
+                    <button class="btn btn-default pull-left" data-toggle="modal" data-target="#profile_pic_modal" style="background-color:transparent; color:white; width:50%">
+                        Upload
+                    </button>
+                  
+                    <button class="btn btn-default pull-right" id="btnDelete" name="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@Model.users.Id" style="background-color:transparent; color:white; width:50%">                      
+                        Remove
+                    </button>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="profile_pic_modal" class="modal">
+        <form enctype="multipart/form-data" role="form">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">                        
+                        <h3>Change Profile Picture</h3>                       
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                       
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="upload">
+                            <span class="photoup">
+                                <a href="#" onclick="$('input[id=fleAddIP600X400]').click();"> <i class="glyphicon-plus"> </i>Upload Photo</a>
+                                <input type="file" id="fleAddIP600X400" name="fleAddIP600X400" required class="form-control" />
+
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="piccropping_modal" class="modal">
+                <div class="modal-dialog">
+                  
+                    <div class="modal-content" style="width: 600px;">                        
+                        <div class="modal-header">                            
+                            <h3>Change Profile Picture</h3>                           
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                            
+                        </div>
+
+                        <div class="modal-body" id="image-cropper">
+
+                            <div class="cropit-preview"></div>
+                            <img id="upimage" style="display:none; width:570px ; height:400px" />
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button formmethod="post" id="save_crop" class="btn btn-primary"
+                                    asp-controller="Users"
+                                    asp-action="AddImage"
+                                    asp-route-fleAddIP600X400="fleAddIP600X400">
+                                <i class="fas fa-save" aria-hidden="true"></i>
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+    <h4>Personal Information</h4>
+    <!-- View Name-->
+    <div class="row" id="onclickName">
+        <div class="col-md-4">
+            <label> Name</label>
+        </div>
+        <div class="col-md-4">
+            <p>@Model.users.FirstName @Model.users.LastName </p>
+            <input type="text" style="display: none;" id="" name="" required class="form-control">
+        </div>
+        <div class="col-md-2">
+            <div class="edit collapseFive" id="editName" data-toggle="collapse" data-target="#collapseFive">
+                <a href="#" data-toggle="collapse" id="nameEdit" data-target="#collapseFive"
+                   data-firstname="@Model.users.FirstName"
+                   data-lastname="@Model.users.LastName"
+                   data-id="@Model.users.Id">
+                    <i class="fa fa-edit"> Edit</i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Edit Name-->
+    <div id="collapseFive" class="row collapse " style="background-color:aliceblue">
+        <div class="span1 "></div>
+        <div class="span9">
+            <div class="col-md-4">
+                <label>First Name</label>
+                <br />
+                <br />
+                <label>Last Name</label>
+            </div>
+            <form role="form" method="post">
+                <div class="col-md-4">
+                    <input type="hidden" name="editUsersId" id="editUsersId">
+                    <input type="text" id="txtEditFirstName" name="txtEditFirstName" required class="form-control"> <br />
+                    <input type="text" id="txtEditLastName" name="txtEditLastName" class="form-control">
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm " id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                asp-controller="Users"
+                                asp-action="EditProfile"
+                                asp-route-editUsersId="editUsersId"
+                                asp-route-txtEditFirstName="txtEditFirstName"
+                                asp-route-txtEditLastName="txtEditLastName">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            Save
+                        </button>
+
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-dismiss="modal" data-toggle="modal" data-target="#modalEdit">
+                            <span style="vertical-align:middle;margin-top: -5px"></span>
+                            Cancel
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- View Date of Birth-->
+    <div class="row" id="onclickDateofBirth">
+        <div class="col-md-4">
+            <label>Date of Birth</label>
+        </div>
+        <div class="col-md-4">
+            @if (Model.users.DateOfBirth.HasValue)
+            {
+                <p>@(Model.users.DateOfBirth.Value.ToShortDateString())</p>
+            }
+        </div>
+        <div class="col-md-2">
+            <div class="edit" id="editDateofBirthButton" data-toggle="collapse" data-target="#collapseFour">
+                <a href="#" id="dateofbirthEdit" data-toggle="collapse" data-target="#collapseFour"
+                   data-dateofbirth="@Model.users.DateOfBirth"
+                   data-id="@Model.users.Id"><i class="fa fa-edit"> Edit</i></a>
+            </div>
+
+        </div>
+    </div>
+    <!-- Edit Date of Birth-->
+    <div id="collapseFour" class="row collapse " style="background-color:aliceblue">
+
+        <div class="span9">
+            <div class="col-md-4">
+                <label>Date of Birth</label>
+            </div>
+            <form method="post" role="form">
+                <div class="wrapper col-md-4">
+                    <input class="form-control" type="text" id="editDateofBirth" name="editDateofBirth" value="@(Model.users.DateOfBirth == null?"": Model.users.DateOfBirth.Value.ToString("yyyy-MM-dd"))">
+                    <input type="hidden" name="editUsersId" id="editUsersId">
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm " id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                asp-controller="Users"
+                                asp-action="EditProfile"
+                                asp-route-editUsersId="editUsersId"
+                                asp-route-editDateofBirth="editDateofBirth">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            Save
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-dismiss="modal" data-toggle="modal" data-target="#modalEdit">
+                            <span style="vertical-align:middle;margin-top: -5px"></span>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- view Gender-->
+
+    <div class="row" id="onclickGender">
+        <div class="col-md-4">
+            <label>Gender</label>
+        </div>
+        <div class="col-md-4">
+            <p> @Model.users.GenderName</p>
+        </div>
+        <div class="col-md-2">
+            <div class="edit" id="editGenderIdButton" data-toggle="collapse" data-target="#collapseThree">
+                <a href="#" id="genderEdit" data-toggle="collapse" data-target="#collapseThree"
+                   data-gender="@Model.users.GenderId"
+                   data-id="@Model.users.Id"><i class="fa fa-edit"> Edit</i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Gender-->
+    <div id="collapseThree" class="row collapse" style="background-color:aliceblue">
+        <div class="span1 "></div>
+        <div class="span9">
+            <div class="col-md-4">
+                <label>Gender</label>
+            </div>
+            <form method="post" role="form">
+                <div class="col-md-4">
+                    <input type="hidden" name="editUsersId" id="editUsersId">
+                    <select class="form-control" id="editGenderId" asp-for-id="editGenderId" name="editGenderId"
+                            asp-items="@(new SelectList (ViewBag.ddlGender, "Id","Name"))"></select>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm " id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                asp-controller="Users"
+                                asp-action="EditProfile"
+                                asp-route-editUsersId="editUsersId"
+                                asp-route-editGenderId="editGenderId">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            Save
+                        </button>
+
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-dismiss="modal" data-toggle="modal" data-target="#modalEdit">
+                            <span style="vertical-align:middle;margin-top: -5px"></span>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <h4>Contact Information</h4>
+    <!-- view Email-->
+    <div class="row" id="onclickEmail">
+        <div class="col-md-4">
+            <label>Email</label>
+        </div>
+        <div class="col-md-4" id="onclickEmail">
+            <p>@Model.users.EmailAddress</p>
+
+        </div>
+        <div class="col-md-2">
+            <div class="edit" id="editEmail" data-toggle="collapse" data-target="#collapseTwo">
+                <a href="#" id="emailEdit" data-toggle="collapse" data-target="#collapseTwo"
+                   data-email="@Model.users.EmailAddress"
+                   data-id="@Model.users.Id"><i class="fa fa-edit"> Edit</i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Email-->
+    <div id="collapseTwo" class="row collapse " style="background-color:aliceblue">
+        <div class="span1 "></div>
+        <div class="span9">
+            <div class="col-md-4">
+                <label>Email</label>
+            </div>
+            <form method="post" role="form">
+                <div class="col-md-4">
+                    <input type="text" id="editEmailAddress" name="editEmailAddress" class="form-control">
+                    <input type="hidden" name="editUsersId" id="editUsersId">
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm " id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                asp-controller="Users"
+                                asp-action="EditProfile"
+                                asp-route-editUsersId="editUsersId"
+                                asp-route-editEmailAddress="editEmailAddress ">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            Save
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-dismiss="modal" data-toggle="modal" data-target="#modalEdit">
+                            <span style="vertical-align:middle;margin-top: -5px"></span>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--View Contact-->
+    <div class="row " id="onclick">
+        <div class="col-md-4">
+            <label>Phone No</label>
+        </div>
+        <div class="col-md-4" id="onclick">
+            <p>@Model.users.ContactNo</p>
+        </div>
+        <div class="col-md-2">
+            <div class="edit" id="clickedit" data-toggle="collapse" data-target="#collapseOne">
+                <a href="#" id="phoneEdit" data-toggle="collapse" data-target="#collapseOne"
+                   data-contact="@Model.users.ContactNo"
+                   data-id="@Model.users.Id">
+                    <i class="fa fa-edit">
+                        Edit
+                    </i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <!-- Edit Contact-->
+    <div id="collapseOne" class="row collapse " style="background-color:aliceblue">
+        <div class="span1 "></div>
+        <div class="span9">
+            <div class="col-md-4">
+                <label>Phone No</label>
+            </div>
+            <form method="post" role="form">
+                <div class="col-md-4">
+                    <input type="text" id="editContact" name="editContact" class="form-control">
+                    <input type="hidden" name="editUsersId" id="editUsersId">
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm " id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                asp-controller="Users"
+                                asp-action="EditProfile"
+                                asp-route-editUsersId="editUsersId"
+                                asp-route-editContact="editContact ">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            Save
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-dismiss="modal" data-toggle="modal" data-target="#modalEdit">
+                            <span style="vertical-align:middle;margin-top: -5px"></span>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="modalDelete" class="modal">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Delete Image</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p><h3>Are you sure you want to remove your profile image?</h3></p>
+
+                </div>
+                <div class="modal-footer">
+                    <form class="form-inline" role="form">
+                        <input type="hidden" name="deleteUserId" id="deleteUserId">
+
+                        <button class="btn btn-success btn-md" formmethod="post"
+                                asp-controller="Users"
+                                asp-action="DeleteImg"
+                                asp-route-deleteUserId="deleteUserId">
+                            <i class="fas fa-check-square" aria-hidden="true"></i>
+                            Yes
+                        </button>
+
+                        <button class="btn btn-danger btn-md " data-dismiss="modal">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                            No
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @section Scripts
+        {
+        <script type="text/javascript">
+            $('input#editDateofBirth').dateDropdowns({
+                format: "dd-MM-yyyy"
+            });
+
+            $("#fleAddIP600X400").on("change", function () {
+
+                var a = window.URL.createObjectURL(this.files[0]);
+
+                $('#upimage').attr('src', a);
+                $("#upimage").show();
+                $("#piccropping_modal").modal();
+            });
+
+            $('#nameEdit').on('click', function () {
+
+                $("#txtEditFirstName").val($(this).data("firstname"));
+                $("#txtEditLastName").val($(this).data("lastname"));
+            });
+
+            $('#genderEdit').on('click', function () {
+
+                $("#editGenderId").val($(this).data("gender"));
+
+            });
+
+
+            $('#emailEdit').on('click', function () {
+
+                $("#editEmailAddress").val($(this).data("email"));
+
+            });
+
+            $('#phoneEdit').on('click', function () {
+
+                $("#editContact").val($(this).data("contact"));
+
+            });
+
+            $(document).ready(function () {
+                $("#editName").click(function () {
+                    $("#onclickName").hide();
+                    $("#collapseFive").show();
+                });
+
+                $("#editDateofBirthButton").click(function () {
+                    $("#onclickDateofBirth").hide();
+                    $("#collapseFour").show();
+                });
+                $("#editGenderIdButton").click(function () {
+                    $("#onclickGender").hide();
+                    $("#collapseThree").show();
+                });
+
+                $("#editEmail").click(function () {
+                    $("#onclickEmail").hide();
+                    $("#collapseTwo").show();
+                });
+
+                $("#clickedit").click(function () {
+                    $("#onclick").hide();
+                    $("#collapseOne").show();
+                });
+            });
+
+            $('#btnDelete').on('click', function () {
+                var t = $(this).data("id")
+                $("#deleteUserId").val($(this).data("id"));
+
+            });
+
+        </script>
+    }
+
+
+
+

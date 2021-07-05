@@ -1,0 +1,327 @@
+﻿
+@model OE.Web.Areas.Institution.Models.PayScalesVM.IndexPayScalesListVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Pay Scale List</h1>
+<button type="button" class="btn btn-success btn-sm" id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#myModal">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!--modal content-->
+        <div class="modal-content">
+            <!--modal header-->
+            <div class="modal-header">
+                <h4>Add new pay scale</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!--modal body-->
+            <div class="modal-body">
+                <form asp-action="InsertPayScale" asp-controller="PayScales" method="post" data-ajax="true" enctype="multipart/form-data" id="addPayScale">
+                    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                    <label class="control-label" asp-for="PayScales.StaffId">Staff Id</label>
+                    <select class="form-control"
+                            id="StaffId"
+                            asp-for-id="StaffId"
+                            asp-for="PayScales.StaffId"
+                            name="PayScales.StaffId"
+                            asp-items="@(new SelectList (ViewBag.ddlStaff, "Id","Name"))">
+
+                        <option value="Select Staff Id">Select Staff Id </option>
+                    </select>
+                    <span class="text-danger" asp-validation-for="PayScales.StaffId"></span><hr />
+                    <label>Salary Year</label>
+                    <input type="text" name="PayScales.Year" id="SalaryYear" required class="form-control datetime" placeholder="Enter salary year">
+                    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                    <label class="control-label" asp-for="PayScales.BasicSalary">Basic Salary</label>
+                    <input type="number" name="PayScales.BasicSalary" id="BasicSalary" asp-for="PayScales.BasicSalary" class="form-control" placeholder="Enter staff basic salary">
+                    <span class="text-danger" asp-validation-for="PayScales.BasicSalary"></span><hr />
+                    <label> Basic Salary Term No</label>
+                    <input type="number" name="PayScales.BasicSalaryTermNo" id="BasicSalaryTermNo" required class="form-control" placeholder="Enter how many times to pay in a year">
+                    <label> Bonus Salary</label>
+                    <input type="number" name="PayScales.BonusSalary" id="BonusSalary" required class="form-control" placeholder="Enter staff's bonus amount">
+                    <label> Bonus Salary Term No</label>
+                    <input type="number" name="PayScales.BonusSalaryTermNo" id="BonusSalaryTermNo" required class="form-control" placeholder="Enter how many times to pay in a year">
+
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewPayScale">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>SN</th>
+            <th>StaffId</th>
+            <th>Salary Year</th>
+            <th>Staff Name</th>
+            <th>Designation </th>
+            <th>Basic Salary</th>
+            <th>Basic Term</th>
+            <th>Bonus Salary</th>
+            <th>Bonus Term</th>
+            <th style="max-width:30px;">  Action </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var data in Model._PayScales)
+        {
+            <tr>
+                <td style="max-width:10px;">@(Model._PayScales.IndexOf(data) + 1)</td>
+                <td class="showDetails pointer">
+                    @data.StaffId
+                </td>
+                <td class="showDetails pointer">
+                    @data.SalaryYear.Year
+                </td>
+                <td class="showDetails pointer">
+                    @data.StaffName
+                </td>
+                <td class="showDetails pointer">
+                    @data.DesignationName
+                </td>
+                <td class="showDetails pointer">
+                    @data.BasicSalary
+                </td>
+                <td class="showDetails pointer">
+                    @data.BasicSalaryTermNo
+                </td>
+                <td class="showDetails pointer">
+                    @data.BonusSalary
+                </td>
+                <td class="showDetails pointer">
+                    @data.BonusSalaryTermNo
+                </td>
+                <td style="max-width:30px;">
+                    <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                            data-id="@data.Id"
+                            data-staffid="@data.StaffId"
+                            data-basicsalary="@data.BasicSalary"
+                            data-basicsalarytermno="@data.BasicSalaryTermNo"
+                            data-bonussalary="@data.BonusSalary"
+                            data-bonussalarytermno="@data.BonusSalaryTermNo"
+                            data-salaryyear="@data.SalaryYear.Year">
+
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                        Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="container">
+    @if (pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-center">
+            @if (pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="PayScales" asp-action="PayScalesList" asp-route-pg="1">First</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="PayScales" asp-action="PayScalesList" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+            @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+            {
+                <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                    <a class="page-link" asp-controller="PayScales" asp-action="PayScalesList" asp-route-pg="@pge">@pge</a>
+                </li>
+            }
+            @if (pager.CurrentPage < pager.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="PayScales" asp-action="PayScalesList" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="PayScales" asp-action="PayScalesList" asp-route-pg="@(pager.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+
+</div>
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit pay scale</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editPayScale">
+                    <input type="hidden" name="PayScales.Id" id="editPayScaleId">
+                    <label> Staff Id</label>
+                    <select class="form-control"
+                            id="txtEditStaffId"
+                            asp-for-id="StaffId"
+                            name="PayScales.StaffId"
+                            asp-items="@(new SelectList (ViewBag.ddlStaff, "Id","Id"))">
+                        <option value="Select Staff Id">Select Staff Id </option>
+                    </select>
+                    <label> Salary Year</label>
+                    <input type="text" name="PayScales.Year" id="EditSalaryYear" required class="form-control datetime">
+                    <label> Basic Salary</label>
+                    <input type="number" name="PayScales.BasicSalary" id="txtEditBasicSalary" required class="form-control">
+                    <label> Basic Salary Term No</label>
+                    <input type="number" name="PayScales.BasicSalaryTermNo" id="txtEditBasicSalaryTermNo" required class="form-control">
+                    <label> Bonus Salary</label>
+                    <input type="number" name="PayScales.BonusSalary" id="txtEditBonusSalary" required class="form-control">
+                    <label> Bonus Salary Term No</label>
+                    <input type="number" name="PayScales.BonusSalaryTermNo" id="txtEditBonusSalaryTermNo" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditPayScale">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Pay Scale</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deletePayScaleList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="PayScalesId" id="delPayScaleid">
+                    <button class="btn btn-md btn-success" id="btnDeletePayScale">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#editPayScaleId").val($(this).data("id"));
+            $("#txtEditStaffId").val($(this).data("staffid"));
+            $("#EditSalaryYear").val($(this).data("salaryyear"));
+            $("#txtEditBasicSalary").val($(this).data("basicsalary"));
+            $("#txtEditBasicSalaryTermNo").val($(this).data("basicsalarytermno"));
+            $("#txtEditBonusSalary").val($(this).data("bonussalary"));
+            $("#txtEditBonusSalaryTermNo").val($(this).data("bonussalarytermno"));
+        });
+        @*$("#btnSaveNewPayScale").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#addPayScale")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertPayScale", "PayScales", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });*@
+        $("#btnEditPayScale").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#editPayScale")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("UpdatePayScale", "PayScales")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delPayScaleid").val($(this).data("id"));
+        });
+
+        $("#btnDeletePayScale").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#deletePayScaleList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeletePayScale", "PayScales")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+    </script>
+}

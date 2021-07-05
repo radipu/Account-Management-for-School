@@ -1,0 +1,229 @@
+﻿
+@if (ViewBag.OeErrorMessage != null)
+{
+    @ViewBag.OeErrorMessage;
+    return;
+}
+@model OE.Web.Areas.Institution.Models.UsersVM.IndexUsersListVM
+<h1 class="page-title">Users </h1>
+<button class="btn btn-success btn-sm " data-toggle="modal" data-target="#mdlFilter">
+    <i class="fas fa-search" aria-hidden="true"></i>
+    Search
+</button>
+
+<br />
+<br />
+@if (ViewBag.searchRequest == false)
+{
+    <b>Search by:   </b> <span class="label label-default">None</span>
+    <br />
+}
+else
+{
+        <a id="Print_AssignedSubjects" class="btn btn-info btn-sm float-sm-right"
+           href="@Url.Action("PrintGetUserList", "Users", new { searchString = Model.SearchString })"
+           target="_blank">
+            <i class="fas fa-print" aria-hidden="true"></i>
+            Print
+        </a>
+
+    <br />
+    <br />
+    <br />
+
+    if (Model._oeusers.Count == 0)
+    {
+        <div class="well"><b>No record has been matched according to selection.</b></div>
+    }
+    else
+    {
+
+        <div class="row">
+            <div class="col-lg-10 col-md-10">
+                <b>Search by:   </b>  <span class="label label-default">
+                    OurEduId:
+                    @Model.SearchString
+                </span>
+            </div>
+        </div>
+        <br />
+
+        <table class="table table-bordered table-hover oePage_backend">
+            <thead>
+                <tr>
+                    <th class="oeTableTitle"> #SN </th>
+                    <th class="oeTableTitle">Picture</th>
+                    <th class="oeTableTitle"> Name </th>
+                    <th class="oeTableTitle">OurEduId</th>
+                    <th class="oeTableTitle">Last Logout Date</th>
+                    <th class="oeTableTitle">Last Entry Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model._oeusers)
+                {
+
+                    <tr>
+                        <td class="showDetails pointer">@(Model._oeusers.IndexOf(item) + 1)</td>
+                        <td class="showDetails pointer">
+                            <label>
+                                <img id="IP300X200" src="~/@item.IP300X200" asp-append-version="true" style="max-height:100px;max-width:100px;" />
+                            </label>
+                        </td>
+                        <td class="showDetails pointer"> <label> @item.FirstName @item.LastName</label></td>
+                        <td class="showDetails pointer"> <label> @item.OurEduId </label></td>
+                        <td class="showDetails pointer"><label> @item.LastLogoutDate?.ToLocalTime() </label></td>
+                        <td class="showDetails pointer"> <label> @item.LastEntryDate?.ToLocalTime() </label></td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+<div id="mdlFilter" class="modal">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">                
+                <h3>Search</h3>               
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+            
+            </div>
+            <div class="modal-body">
+                <form>
+                    <br />
+                    <label>OurEduId</label>
+                    <div>
+                        <input type="text" name="searchString" id="searchOurEduId" class="form-control" placeholder="OurEduID" required>
+                    </div>
+                    <hr />
+                    <input class="btn btn-success btn-md  btn-success" type="submit" value="Search" formmethod="get"
+                           asp-controller="Users"
+                           asp-action="GetUserList">
+                    <button class="btn btn-danger btn-md " type="button" data-dismiss="modal">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="MessageBox" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-center" id="exampleModalLongTitle">Message</h3>
+            </div>
+            <div class="modal-body text-center text-danger">
+
+                <h3 id="msg"></h3>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- #endregion  "All Modals"-->
+<!-- #region "All Scripts" -->
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+
+        var url = '@Url.Action("AssignedCoursesForEdit", "AssignedCourses")';
+        $('tr td #btnEdit').on("click", function () {
+              $("#editClassName").text("Class: " + $(this).data("classname"));
+            var year = $(this).data("year");
+            var classId = $(this).data("classid");
+            $('#mdlModify #CourseList').load(url, { ClassId: classId, Year: year });
+        });
+
+
+         //[NOTE: JQuery for Adding form]
+        $("tr td #btnNew").on("click", function () {
+            $("#clsName").text("Class: " + $(this).data("classname"));
+            $("#txtAddYear").val($(this).data("year"));
+            $("#txtAddClassId").val($(this).data("classid"));
+
+            var year = $(this).data("year");
+            var classId = $(this).data("classid");
+
+            var url = '@Url.Action("DropDown_AssignedSections", "AssignedCourses", new { Area = "Institution" })';
+            var url1 = '@Url.Action("DropDown_Subjects", "AssignedCourses", new { Area = "Institution" })';
+
+            if (year != 0 && classId != 0) {
+                $.getJSON(url, { year: year, ddlClassId: classId }, function (jsonResult) {
+                    if (jsonResult.length != 0) {
+                        var item = "<option value=''>Select Section</option>";
+                        $("#addSectionId").empty();
+                        $.each(jsonResult, function (i, row) {
+                            item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                        });
+                        $('#addSectionId').html(item);
+                    }
+                    else {
+                        $('#addSectionId').html("<option value=''>Select Section</option>");
+                    }
+                });
+
+                $.getJSON(url1, { ddlClassId: classId }, function (jsonResult) {
+                    if (jsonResult.length != 0) {
+                        var item = "<option value=''>Select Subject</option>";
+                        $("#addSubjectId").empty();
+                        $.each(jsonResult, function (i, row) {
+                            item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                        });
+                        $('#addSubjectId').html(item);
+                    }
+                    else {
+                        $('#addSubjectId').html("<option value=''>Select Subject</option>");
+                    }
+                });
+            }
+        });
+
+        $("#mdlAdd").on("hidden.bs.modal", function () {
+           $("#addFrom").trigger("reset");
+        });
+
+        $("#mdlModify").on("hidden.bs.modal", function () {
+            location.reload();
+        });
+
+        $("#btnAdd").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addFrom")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("Add", "AssignedCourses", new { Area = "Institution" })',
+                 success: function (data) {
+                     if (data.msg == null || data.msg == "") {
+                         location.reload();
+                     }
+                     else {
+                         $('#msg').text(data.msg);
+                         $('#MessageBox').modal();
+                     }
+                 },
+                 error: function () {
+                 },
+                 complete: function () {
+                 }
+             });
+        });
+
+    </script>
+}
+
+<!-- #endregion  "All Scripts"-->

@@ -1,0 +1,19 @@
+﻿.page-backend {
+}
+
+.oePage_backend .button-inside-row {
+    padding-bottom: 2px;
+}
+
+.oePage_backend  a {
+    padding-bottom: 2px;
+}
+
+.oePage_backend thead tr {
+    background-color: green;
+    color: white;
+}
+
+.oePage_backend .oeTableTitle-align {
+    vertical-align: top;
+}

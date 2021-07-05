@@ -1,0 +1,82 @@
+﻿
+@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutReport.cshtml";
+}
+
+@model OE.Web.Areas.Institution.Models.StudentPaymentsVM.PrintIndexStudentPaymentsListVM;
+
+<div class="informationArea">
+    <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="center-block" />
+    <h3 class="text-center"> @Model.Institution.Name</h3>
+    <h4 class="text-center">@Model.Institution.Email</h4>
+    <h4 class="text-center">@Model.Institution.ContactNo</h4>
+    <hr />
+</div>
+<br />
+<h3 class="page-title">Student Payments List</h3>
+
+<br />
+<br />
+
+
+@if (Model._StudentPayments.Count() == 0)
+{
+    <div class="well"><b>No record has been matched according to selection.</b></div>
+}
+else
+{
+    <div class="watermark print-watermark">
+        <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="print-logo" />
+    </div>
+
+    <br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="max-width:10px;">SN</th>
+                <th>PaymentDate </th>
+                <th>StudentId </th>
+                <th>StudentName </th>
+                <th>FeeType </th>
+                <th>DiscountAmount</th>
+                <th>Fine </th>
+                <th>PaidAmount </th>
+                <th>Remarks </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var data in Model._StudentPayments)
+            {
+
+                <tr>
+                    <td style="max-width:10px;">@(Model._StudentPayments.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.PaymentDate)
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.StudentId
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.StudentName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.FeeType
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Amount
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Fine
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.PaidAmount
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Remarks
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

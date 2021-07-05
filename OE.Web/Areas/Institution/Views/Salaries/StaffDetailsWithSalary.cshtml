@@ -1,0 +1,435 @@
+﻿
+@model OE.Web.Areas.Institution.Models.SalariesVM.IndexSalariesListVM;
+
+
+<ol class="breadcrumb" style="background-color:transparent">
+    <li class="breadcrumb-item">
+        <a asp-area="Institution"
+           asp-controller="Salaries"
+           asp-action="StaffList">Staffs List</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Staff Salary Details</li>
+</ol>
+
+
+<br />
+<div style="clear:both;">
+    <h4><b>Id: </b> @Model.Staffs.Id</h4>
+    <h4><b>Name:</b> @Model.Staffs.Name (@Model.Staffs.Designation) </h4>
+    <h4><b>Cell: </b> @Model.Staffs.Cell</h4>
+    <h4><b>Email: </b>  @Model.Staffs.Email</h4>
+    <h4><b>Address: </b>  @Model.Staffs.Address</h4>
+</div>
+<br />
+<button class="btn btn-success btn-sm " id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#mdlAdd">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+<br />
+<br />
+@if (Model._Salaries.Count() == 0)
+{
+    <div class="well"><b>No record has been matched according to selection.</b></div>
+}
+
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="max-width:10px;">SN</th>
+                <th>Date </th>
+                <th>Salary Type</th>
+                <th>Term No</th>
+                <th>Salary Ammount</th>
+                <th>Paid<br />Amount </th>
+                <th>Remark </th>
+                <th style="max-width:30px;">  Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model._Salaries)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._Salaries.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.Date)
+                    </td>
+                    <td class="showDetails pointer">
+                        @if (data.SalaryTypeId == 1)
+                        {
+                            <label>Basic Salary</label>
+                        }
+                        else
+                        {
+                            <label>Bonus</label>
+                        }
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.TermNo
+                    </td>
+                    <td class="showDetails pointer">
+                        @if (data.SalaryTypeId == 1)
+                        {
+                            <label>@Model.Amount</label>
+                        }
+                        else
+                        {
+                            <label>@Model.BonusAmount</label>
+                        }
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Amount
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Remark
+                    </td>
+                    <td style="max-width:30px;">
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                data-id="@data.Id"
+                                data-staffid="@data.StaffId"
+                                data-termno="@data.TermNo"
+                                data-date="@String.Format("{0:dd-MMM-yyyy}", data.Date)"
+                                data-amount="@data.Amount"
+                                data-salarytype="@data.SalaryTypeId"
+                                data-remark="@data.Remark">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div id="mdlAdd" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Salary</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="addSalary">
+                    <label> Date </label>
+                    <input type="text" name="Salaries.Date" value="@String.Format("{0:dd-MMM-yyyy}", DateTime.Now)" id="Date" required class="form-control datetime"><br />
+                    <label> Staff Name </label>
+                    <input type="hidden" name="Salaries.StaffId" value="@Model.Staffs.Id" id="StaffId" required class="form-control"><br />
+                    <label id="StaffName" value="" required class="form-control">
+                        @(Model.Staffs.FirstName + " " + Model.Staffs.LastName)
+                    </label>
+                    <br />
+                    <label> Salary Type </label>
+                    <select class="form-control" id="addSalaryTypeId" name="Salaries.SalaryTypeId">
+                        <option value="Select Salary Type">Select Salary Type</option>
+                        <option value="1">Basic Salary</option>
+                        <option value="2">Bonus</option>
+                    </select>
+                    <br />
+                    <div id="DivOne" hidden>
+                        <label> Salaries Term No</label>
+                        <select class="form-control" id="addTermNo" name="Salaries.TermNo" asp-for-id="Id" asp-items="@(new SelectList (ViewBag.ddlTermNo, "Id","Number"))"></select>
+                        <br />
+                    </div>
+                    <div id="DivTwo" hidden>
+                        <label> Salaries Term No</label>
+                        <select class="form-control" id="addTermNo" name="Salaries.TermNo" asp-for-id="Id" asp-items="@(new SelectList (ViewBag.ddlBonusTermNo, "Id","Number"))"></select>
+                        <br />
+                    </div>
+                    <label>Amount</label>
+                    <label id="Amountvalue">(Basic salary:@Model.Amount or Bonus: @Model.BonusAmount)</label>
+                    <input type="number" name="Salaries.Amount" id="Amount" data-basicamount="@Model.Amount" data-bonus="@Model.BonusAmount" required class="form-control"><br />
+                    <label>Remarks</label>
+                    <input type="text" name="Salaries.Remark" id="Remarks" required class="form-control"><br />
+                    <button class="btn btn-success btn-md" id="btnSaveNewSalary">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editClasses">
+                    <input type="hidden" name="Salaries.Id" id="salariId" required class="form-control"><br />
+                    <label> Date</label>
+                    <input type="text" name="Salaries.Date" id="txtEditDate" required class="form-control datetime">
+                    <hr />
+                    <label> Staff Name </label>
+                    <input type="hidden" name="Salaries.StaffId" value="@Model.Staffs.Id" id="StaffId" required class="form-control"><br />
+
+                    <label id="StaffName" value="" required class="form-control">
+                        @(Model.Staffs.FirstName + " " + Model.Staffs.LastName)
+                    </label>
+                    <label> Salary Type </label>
+                    <select class="form-control" id="editSalaryTypeId" name="Salaries.SalaryTypeId">
+                        <option value="Select Salary Type">Select Salary Type</option>
+                        <option value="1">Basic Salary</option>
+                        <option value="2">Bonus</option>
+                    </select>
+
+                    <br />
+                    <br />
+                    <div id="editDivOne" hidden>
+                        <label> Salaries Term No</label>
+                        <select class="form-control" id="editTermNo" name="Salaries.TermNo" asp-for-id="Id" asp-items="@(new SelectList (ViewBag.ddlTermNo, "Id","Number"))"></select>
+                        <br />
+                    </div>
+                    <div id="editDivTwo" hidden>
+                        <label> Salaries Term No</label>
+                        <select class="form-control" id="editTermNo" name="Salaries.TermNo" asp-for-id="Id" asp-items="@(new SelectList (ViewBag.ddlBonusTermNo, "Id","Number"))"></select>
+                        <br />
+                    </div>
+                    <label> Amount</label>
+                    <label id="Amountvalue">(Basic salary:@Model.Amount or Bonus: @Model.BonusAmount)</label>
+                    <input type="number" name="Salaries.Amount" id="txtEditAmount" data-basicamount="@Model.Amount" data-bonus="@Model.BonusAmount" required class="form-control">
+                    <hr />
+                    <label> Remark</label>
+                    <input type="text" name="Salaries.Remark" id="txtEditRemark" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditClasses">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Staff Details</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteClassList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="SalaryId" id="delclassid">
+                    <button class="btn btn-md btn-success" id="btnDeleteClass">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modalMessage" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Message</h4>
+            </div>
+            <div class="modal-body">
+                <p><h3 id="txtMessage" style="color:red"></h3></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-md" onclick="location.reload()" data-dismiss="modal">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                    Ok
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        $("#addSalaryTypeId").on('change', function () {
+            var fileTypeId = $('#addSalaryTypeId').val();
+            if (fileTypeId == 1) {
+                $('#DivOne').show();
+                $('#DivTwo').hide();
+            }
+            else if (fileTypeId == 2) {
+                $('#DivTwo').show();
+                $('#DivOne').hide();
+            }
+        });
+
+        $("#Amount").on('keypress', function (e) {
+            var fileTypeId = $('#addSalaryTypeId').val();
+            var basicAmount = $(this).data("basicamount");
+            var bonus = $(this).data("bonus");
+            var keyCode = e.keyCode == 0 ? e.charCode : e.keyCode;
+            var value = Number(e.target.value + e.key) || 0;
+            if (fileTypeId == 1) {
+                if ((keyCode >= 37 && keyCode <= 40) || (keyCode == 8 || keyCode == 9 || keyCode == 13) || (keyCode >= 48 && keyCode <= 57)) {
+                    return (1 <= value && value <= basicAmount);
+                }
+                    return false;
+            }
+            else if (fileTypeId == 2) {
+                if ((keyCode >= 37 && keyCode <= 40) || (keyCode == 8 || keyCode == 9 || keyCode == 13) || (keyCode >= 48 && keyCode <= 57)) {
+                    return (1 <= value && value <= bonus);
+                }
+                    return false;
+            }
+        });
+
+        $("#txtEditAmount").on('keypress', function (e) {
+            var fileTypeId = $('#editSalaryTypeId').val();
+            //var amount = $('#Amount').val();
+            var basicAmount = $(this).data("basicamount");
+            var bonus = $(this).data("bonus");
+            var keyCode = e.keyCode == 0 ? e.charCode : e.keyCode;
+            var value = Number(e.target.value + e.key) || 0;
+            if (fileTypeId == 1) {
+                if ((keyCode >= 37 && keyCode <= 40) || (keyCode == 8 || keyCode == 9 || keyCode == 13) || (keyCode >= 48 && keyCode <= 57)) {
+                    return (1 <= value && value <= basicAmount);
+                }
+                    return false;
+            }
+            else if (fileTypeId == 2) {
+                if ((keyCode >= 37 && keyCode <= 40) || (keyCode == 8 || keyCode == 9 || keyCode == 13) || (keyCode >= 48 && keyCode <= 57)) {
+                    return (1 <= value && value <= bonus);
+                }
+                    return false;
+            }
+        });
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#salariId").val($(this).data("id"));
+
+            $("#txtEditDate").val($(this).data("date"));
+            $("#txtEditAmount").val($(this).data("amount"));
+            $("#editTermNo").val($(this).data("termno"));
+            $("#txtEditRemark").val($(this).data("remark"));
+            $("#editSalaryTypeId").val($(this).data("salarytype"));
+
+            var salaryType = $(this).data("salarytype");
+            if (salaryType == 1) {
+                $('#editDivOne').show();
+                $('#editDivTwo').hide();
+            }
+            else {
+                $('#editDivTwo').show();
+                $('#editDivOne').hide();
+            }
+        });
+        $("#editSalaryTypeId").on('change', function () {
+            var fileTypeId = $('#editSalaryTypeId').val();
+            if (fileTypeId == 1) {
+                $('#editDivOne').show();
+                $('#editDivTwo').hide();
+            }
+            else if (fileTypeId == 2) {
+                $('#editDivTwo').show();
+                $('#editDivOne').hide();
+            }
+        });
+        $("#btnEditClasses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#editClasses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+                 processData: false,
+                 url: '@Url.Action("UpdateSalary", "Salaries")',
+                 success: function (response) {
+                     if (response.success == true) {
+                         location.reload();
+                     }
+                     else {
+                         $('#txtMessage').text(response.message);
+                         $('#modalMessage').modal('show');
+                     }
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delclassid").val($(this).data("id"));
+        });
+        $("#btnDeleteClass").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#deleteClassList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+                 url: '@Url.Action("DeleteSalary", "Salaries")',
+                 success: function (response) {
+                     if (response.success == true) {
+                         location.reload();
+                     }
+                     else {
+                         $('#txtMessage').text(response.message);
+                         $('#modalMessage').modal('show');
+                     }
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+        $("#btnSaveNewSalary").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addSalary")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertSalary", "Salaries", new { Area = "Institution" })',
+                success: function (response) {
+                    if (response.success == true) {
+                        $('#txtMessage').text(response.message);
+                        $('#modalMessage').modal('show');
+                    }
+                    else {
+                        $('#txtMessage').text(response.message);
+                        $('#modalMessage').modal('show');
+                    }
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+    </script>
+}

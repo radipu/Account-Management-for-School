@@ -1,0 +1,499 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StudentsVM.IndexStudentsListVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Student List</h1>
+<br />
+<button class="btn btn-success btn-sm " id="btnSearch" name="btnSearch" data-toggle="modal" data-target="#modalSearch">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    Search
+</button>
+
+<div id="modalSearch" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!--modal content-->
+        <div class="modal-content">
+            <!--modal header-->
+            <div class="modal-header">
+                <h4>Search by class</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!--modal body-->
+            <div class="modal-body">
+                <form asp-controller="Students" asp-action="SearchByClass" method="get">
+                    <select class="form-control"
+                            id="ClassId"
+                            asp-for-id="ClassId"
+                            name="SearchStudentClassId"
+                            asp-items="@(new SelectList(ViewBag.ddlClasses, "Id", "Name"))">
+                        <option value="Select  Class">Select  Class</option>
+                        <option value="All class">All class</option>
+                    </select><br />
+                    <br />
+                    <button class="btn btn-success btn-md" id="btnSearch">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        Search
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+@if (ViewBag.searchRequest == false)
+{
+    <b>Search by:   </b> <span class="label label-default">None</span>
+    <br />
+}
+else
+{
+    if (Model._Students.Count == 0)
+    {
+        <a class="btn btn-success btn-sm" id="btnAdd" name="btnAdd"
+           asp-area="Institution"
+           asp-controller="Students"
+           asp-action="StudentsaddDetails"
+           asp-route-SearchStudentClassId="@Model.SearchStudentClassId">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            Add
+        </a>
+        <br />
+        <div class="row">
+            <div class="col-lg-10 col-md-10">
+                <b>Search by:   </b>  <span class="label label-default">Class: @Model.ClassName </span>
+            </div>
+        </div>
+        <div class="well"><b>No Record has been matched according to selection.</b></div>
+    }
+    else
+    {
+        <a class="btn btn-success btn-sm" id="btnAdd" name="btnAdd"
+           asp-area="Institution"
+           asp-controller="Students"
+           asp-action="StudentsaddDetails"
+           asp-route-SearchStudentClassId="@Model.SearchStudentClassId">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            Add
+        </a>
+        <br />
+        <div class="row">
+            <div class="col-lg-10 col-md-10">
+                <b>Search by:   </b>  <span class="label label-default">Class: @Model.ClassName </span>
+            </div>
+        </div>
+        <br />
+        <div class="fa-pull-right">
+            <a id="Print_AssignedSubjects" class="btn btn-default hidden-print"
+               href="@Url.Action("PrintStudentsList", "Students")"
+               target="_blank">
+                <i class="fa fa-print" aria-hidden="true"></i>
+                Print
+            </a>
+        </div>
+        <br />
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>Student Image</th>
+                    <th>Parents </th>
+                    <th> Registration No </th>
+                    <th> Class & Current year</th>
+                    <th>Gender</th>
+                    <th>Class & Admitted Year </th>
+                    <th>IsActive</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model._Students)
+                {
+                    <tr>
+                        <td style="max-width:10px;">@(Model._Students.IndexOf(data) + 1)</td>
+                        <td class="showDetails pointer text-center">
+                            <img src="~/@data.IP300X200" asp-append-version="true" style="height:120px;width:120px;" />
+                            @data.StudentName
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.ParentsName
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.RegistrationNo
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.CurrentClassName
+                            <br />
+                            @data.CurrentYear.Year
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.GenderName
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.ClassName <br />
+                            @data.AdmittedYear.Year
+                        </td>
+                        <td class="showDetails pointer">
+                            @if (data.IsActive == true)
+                            {
+                                <h>Yes</h>
+                            }
+                            else
+                            {
+                                <h>No</h>
+                            }
+                        </td>
+                        <td class="showDetails pointer">
+                            <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                    data-id="@data.Id"
+                                    data-className="@data.ClassName"
+                                    data-genderName="@data.GenderName"
+                                    data-firstname="@data.FirstName"
+                                    data-classid="@data.ClassId"
+                                    data-lastname="@data.LastName"
+                                    data-fathername="@data.FatherName"
+                                    data-mothername="@data.MotherName"
+                                    data-registration="@data.RegistrationNo"
+                                    data-rollno="@data.RollNO"
+                                    data-genderid="@data.GenderId"
+                                    data-ip300x200="@data.IP300X200"
+                                    data-admittedyear="@data.AdmittedYear.Year"
+                                    data-presentaddress="@data.PresentAddress"
+                                    data-permanentaddress="@data.PermanentAddress"
+                                    data-dob="@String.Format("{0:dd-MMM-yyyy}",data.DOB)"
+                                    data-valid="@data.IsActive">
+                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                Delete
+                            </button>
+                            <a class="btn btn-primary btn-sm"
+                               asp-area="Institution"
+                               asp-controller="Students"
+                               asp-action="StudentDetails"
+                               asp-route-StudentId="@data.Id">
+                                <i class="fa fa-external-link-alt" aria-hidden="true"></i>
+                                Details
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+       
+        <div class="container">
+            @if (pager.TotalPages > 0)
+            {
+                <ul class="pagination justify-content-center">
+                    @if (pager.CurrentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-controller="Students" asp-action="SearchByClass" asp-route-pg="1">First</a>
+                        </li>
+                        <li>
+                            <a class="page-link" asp-controller="Students" asp-action="SearchByClass" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                        </li>
+                    }
+                    @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+                    {
+                        <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                            <a class="page-link" asp-controller="Students" asp-action="SearchByClass" asp-route-pg="@pge">@pge</a>
+                        </li>
+                    }
+                    @if (pager.CurrentPage < pager.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-controller="Students" asp-action="SearchByClass" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                        </li>
+                        <li>
+                            <a class="page-link" asp-controller="Students" asp-action="SearchByClass" asp-route-pg="@(pager.TotalPages)">Last</a>
+                        </li>
+                    }
+                </ul>
+            }
+
+        </div>
+       
+        <div id="modalEdit" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Students</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" id="editStudent">
+                            <input type="hidden" name="Students.Id" id="editStudentId">
+                            <input type="hidden" name="Students.IP300X200" id="txtEditIP300X200">
+                            <label>FirstName</label>
+                            <input type="text" name="Students.FirstName" id="txtEditFirstName" required class="form-control">
+                            <hr />
+                            <label>LastName</label>
+                            <input type="text" name="Students.LastName" id="txtEditLastName" required class="form-control"><hr />
+                            <label>FatherName</label>
+                            <input type="text" name="Students.FatherName" id="txtEditFatherName" required class="form-control">
+                            <hr />
+                            <label>MotherName</label>
+                            <input type="text" name="Students.MotherName" id="txtEditMotherName" required class="form-control"><hr />
+                            <label>Image :</label>
+                            <input type="file" id="fleEditIP300X200" name="Students.fleImage" class="form-control" />
+                            <br />
+                            <div id="editImagBlock">
+                                <img id="editIP300X200" src="" asp-append-version="true" height="150" width="200"><br /><br />
+                                <a href="#" class="btn btn-danger" onclick="ClrEditPreview()"><i class="fa fa-trash"></i></a>
+                                <br /><br />
+                            </div>
+                            <br />
+                            <label> Registration No</label>
+                            <input type="text" name="Students.RegistrationNo" id="txtEditRegistrationNo" required class="form-control"><br />
+
+                            <label> Roll No</label>
+                            <input type="number" name="StudentPromotions.RollNo" id="txtEditRollNo" required class="form-control"><br />
+
+                            <label>Class Name</label>
+                            <select class="form-control"
+                                    id="txtEditClassId"
+                                    asp-for-id="ClassId"
+                                    name="Students.ClassId"
+                                    asp-items="@(new SelectList (ViewBag.ddlClasses, "Id","Name"))">
+                                <option value="Select Class Name">Select Class Name</option>
+                            </select>
+                            <label>Gender</label>
+                            <select class="form-control"
+                                    id="txtEditGenderId"
+                                    asp-for-id="GenderId"
+                                    name="Students.GenderId"
+                                    asp-items="@(new SelectList (ViewBag.ddlGenders, "Id","Name"))">
+                                <option value="Select Gender">Select Gender</option>
+                            </select>
+                            <hr />
+                            <label>AdmittedYear</label>
+                            <input type="text" name="Students.Year" id="txtEditAdmittedYear" required class="form-control">
+                            <hr />
+                            <label>PresentAddress</label>
+                            <input type="text" name="Students.PresentAddress" id="txtEditPresentAddress" required class="form-control">
+                            <hr />
+                            <label>PermanentAddress</label>
+                            <input type="text" name="Students.PermanentAddress" id="txtEditPermanentAddress" required class="form-control">
+                            <hr />
+                            <label>DOB</label>
+                            <input type="text" name="Students.DOB" id="txtEditDOB" required class="form-control datetime">
+                            <hr />
+                            <label> IsActive</label>
+                            <input type="checkbox" name="Students.IsActive" id="txtEditIsActive" value="true"><br /><br />
+                            <hr />
+                            <hr />
+                            <button class="btn btn-success btn-md" formmethod="post" id="btnEditStudent">
+                                <i class="fa fa-save" aria-hidden="true"></i>
+                                Save
+                            </button>
+                            <button class="btn btn-danger btn-md " data-dismiss="modal">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                                Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modalDelete" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Student</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <form enctype="multipart/form-data" id="deleteStudentList">
+                        <div class="modal-body">
+                            <p><h4>Are you sure you want to delete this?</h4></p>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" name="StudentId" id="delStudentid">
+                            <button class="btn btn-md btn-success" id="btnDeleteStudent">
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                                Yes
+                            </button>
+                            <button class="btn btn-danger btn-md " data-dismiss="modal">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                                No
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="modalMessage" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Success</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p><h3 id="txtMessage" style="color:red"></h3></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success btn-md" onclick="location.reload()" data-dismiss="modal">
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                            Ok
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+
+}
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#editStudentId").val($(this).data("id"));
+            $("#txtEditFirstName").val($(this).data("firstname"));
+            $("#txtEditLastName").val($(this).data("lastname"));
+            $("#txtEditFatherName").val($(this).data("fathername"));
+            $("#txtEditMotherName").val($(this).data("mothername"));
+            $("#txtEditRegistrationNo").val($(this).data("registration"));
+            $("#txtEditIP300X200").val($(this).data("ip300x200")); //[NOTE: for hidden]
+            $("#txtEditRollNo").val($(this).data("rollno"));
+
+            $("#txtEditClassId").val($(this).data("className"));
+            $("#txtEditClassId").val($(this).data("classid"));
+            $("#txtEditGenderId").val($(this).data("genderid"));
+            $("#txtEditAdmittedYear").val($(this).data("admittedyear"));
+            $("#txtEditPresentAddress").val($(this).data("presentaddress"));
+            $("#txtEditPermanentAddress").val($(this).data("presentaddress"));
+            $("#txtEditDOB").val($(this).data("dob"));
+            var valid = $(this).data("valid");
+            if (valid == "True") {
+                $('#txtEditIsActive').prop('checked', true);
+            } else {
+                $('#txtEditIsActive').prop('checked', false);
+            }
+            //[NOTE:image]
+            var imageVersionNo = Math.random();
+            var imageWithVersion = "/" + $(this).data('ip300x200') + "?v=" + imageVersionNo;
+            $('#modalEdit #editIP300X200').attr('src', imageWithVersion); //[NOTE: for Display]
+        });
+
+        $('#fleEditIP300X200').on('change', function () {
+            var imageFile = window.URL.createObjectURL(this.files[0]);
+            $('#modalEdit #editIP300X200').attr('src', imageFile);   //[NOTE: for Display]
+            $('#modalEdit #editIP300X200').show();
+            $('#modalEdit #txtEditIP300X200').val(imageFile.FileName); //[NOTE: for hidden]
+        });
+        var ClrEditPreview = function () {
+            $("#editImagBlock").hide();
+            $("#fleEditIP300X200").val('');
+            $('#txtEditIP300X200').val('');
+        }
+        $('#fleAddIP300X200').on('change', function () {
+            var imageFile = window.URL.createObjectURL(this.files[0]);
+            $('#mdlAdd #fleAddImgPreView').attr('src', imageFile);   //[NOTE: for Display]
+            $('#mdlAdd #addImagBlock').show();
+        });
+
+        $("#btnSaveNewStudent").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#addStudent")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertStudent", "Students", new { Area = "Institution" })',
+                 success: function (response) {
+
+                     if (response.success == true) {
+                         $('#txtMessage').text(response.message);
+                         $('#modalMessage').modal('show');
+                     }
+                     else {
+                         $('#txtMessage').text(response.message);
+                         $('#modalMessage').modal('show');
+                     }
+
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+             });
+        });
+        $("#btnEditStudent").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#editStudent")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("UpdateStudent", "Students")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delStudentid").val($(this).data("id"));
+        });
+        $("#btnDeleteStudent").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#deleteStudentList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteStudent", "Students")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+
+    </script>
+}

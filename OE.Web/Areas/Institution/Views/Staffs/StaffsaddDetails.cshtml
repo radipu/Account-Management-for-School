@@ -1,0 +1,195 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StaffsVM.IndexStaffsListByAdminVM;
+<h1>Add Staff Details</h1>
+
+<form asp-action="InsertStaff" asp-controller="Staffs" method="post" data-ajax="true" enctype="multipart/form-data" id="addStaff">
+    <div class="form-row">
+
+        <label>
+            Image :
+            <a tabindex="0" data-toggle="popover" data-trigger="focus" data-container="body" title="Tip: Image Upload" data-content="Standard image size for Students: Width= 300px Height= 200px.">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+            </a>
+        </label>
+        <input type="file" name="Staffs.fleImage" id="fleAddIP300X200" class="form-control">
+        <span id="errAddMsg" class="alert-danger"></span>
+        <br />
+        <div id="addImagBlock" style="display:none">
+            <img id="fleAddImgPreView" src="" style="width:200px; height:150px; border:10px;" asp-append-version="true"><br /><br />
+            <a href="#" class="btn btn-danger" onclick="ClrAddPreview()"><i class="glyphicon glyphicon-trash"></i></a>
+            <br />
+        </div>
+        <div class="form-group col-md-6">
+            <label> Designation* </label>
+            <select class="form-control"
+                    id="DesignationId"
+                    asp-for-id="DesignationId"
+                    name="Staffs.DesignationId"
+                    asp-items="@(new SelectList (ViewBag.ddlDesignations, "Id","Name"))">
+                <option value="Select Designation">Select Designation</option>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <label>Gender*</label>
+            <select class="form-control"
+                    id="GenderId"
+                    asp-for-id="GenderId"
+                    name="Staffs.GenderId"
+                    asp-items="@(new SelectList (ViewBag.ddlGenders, "Id","Name"))">
+                <option value="Select Gender">Select Gender</option>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <label class="control-label" asp-for="Staffs.FirstName">First Name*</label>
+            <input type="text" name="Staffs.FirstName" id="ClassName" asp-for="Staffs.FirstName" class="form-control" placeholder="Enter staff first name"><br />
+            <span class="text-danger" asp-validation-for="Staffs.FirstName"></span><hr />
+        </div>
+        <div class="form-group col-md-6">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <label class="control-label" asp-for="Staffs.LastName">Last Name*</label>
+            <input type="text" name="Staffs.LastName" id="LastName" asp-for="Staffs.LastName" class="form-control" placeholder="Enter staff last name"><br />
+            <span class="text-danger" asp-validation-for="Staffs.LastName"></span><hr />
+        </div>
+        <div class="form-group col-md-6">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <label class="control-label" asp-for="Staffs.Cell">Cell Phone*</label>
+            <input type="text" name="Staffs.Cell" id="Cell" asp-for="Staffs.Cell" class="form-control" placeholder="Enter staff mobile no"><br />
+            <span class="text-danger" asp-validation-for="Staffs.Cell"></span><hr />
+        </div>
+        <div class="form-group col-md-6">
+            <label> Email</label>
+            <input type="text" name="Staffs.Email" id="Email" required class="form-control" placeholder="Enter staff email address"><br />
+        </div>
+        <div class="form-group col-md-6">
+            <label> Education</label>
+            <input type="text" name="Staffs.Education" id="Education" required class="form-control" placeholder="Enter staff education qualification"><br />
+        </div>
+
+        <br />
+        <div class="form-group col-md-6">
+            <label> Address</label>
+            <input type="text" name="Staffs.Address" id="Address" required class="form-control" placeholder="Enter staff address"><br />
+
+        </div>
+    </div>
+    @*data-dismiss="modal"*@
+    <button class="btn btn-success btn-md" id="btnSaveNewStaff">
+        <i class="fa fa-save" aria-hidden="true"></i>
+        Save
+    </button>
+
+    <button class="btn btn-danger btn-md " data-dismiss="modal">
+
+        <i class="fa fa-times" aria-hidden="true"></i>
+        Cancel
+    </button>
+    
+    <a class="btn btn-primary btn-md" data-dismiss="modal"
+       asp-area="Institution"
+       asp-controller="Staffs"
+       asp-action="StaffsListByAdmin">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        Go Back
+    </a>
+
+</form>
+
+<div id="modalMessage" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirmation Message</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><h3 id="txtMessage" style="color:red"></h3></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-md" onclick="location.reload()" data-dismiss="modal">
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                    Ok
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        //$(".datetime").datepicker(
+        //    {
+        //        format: "dd/MM/yyyy",
+        //        autoclose: true
+        //    }
+        //);
+        ////[NOTE: Tip]
+        //$('[data-toggle="popover"]').popover({
+        //    trigger: 'focus'
+        //})
+        $('tr td #btnEdit').on('click', function () {
+            $("#editStaffId").val($(this).data("id"));
+            $("#txtEditDesignationId").val($(this).data("designationid"));
+            $("#txtEditFirstName").val($(this).data("firstname"));
+            $("#txtEditLastName").val($(this).data("lastname"));
+            $("#txtEditIP300X200").val($(this).data("ip300x200"));
+            $("#txtEditGenderId").val($(this).data("genderid"));
+            $("#txtEditCell").val($(this).data("cell"));
+            $("#txtEditEmail").val($(this).data("email"));
+            $("#txtEditEducation").val($(this).data("education"));
+            $("#txtEditAddress").val($(this).data("address"));
+            var imageVersionNo = Math.random();
+            var imageWithVersion = "/" + $(this).data('ip300x200') + "?v=" + imageVersionNo;
+            $('#modalEdit #editIP300X200').attr('src', imageWithVersion); //[NOTE: for Display]
+        });
+
+        $('#fleEditIP300X200').on('change', function () {
+            var imageFile = window.URL.createObjectURL(this.files[0]);
+            $('#modalEdit #editIP300X200').attr('src', imageFile);   //[NOTE: for Display]
+            $('#modalEdit #editIP300X200').show();
+            $('#modalEdit #txtEditIP300X200').val(imageFile.FileName); //[NOTE: for hidden]
+        });
+        var ClrEditPreview = function () {
+            $("#editImagBlock").hide();
+            $("#fleEditIP300X200").val('');
+            $('#txtEditIP300X200').val('');
+        }
+        $('#fleAddIP300X200').on('change', function () {
+            var imageFile = window.URL.createObjectURL(this.files[0]);
+            $('#mdlAdd #fleAddImgPreView').attr('src', imageFile);   //[NOTE: for Display]
+            $('#mdlAdd #addImagBlock').show();
+        });
+ @*$("#btnSaveNewStaff").on('click', function (e)
+ {
+            e.preventDefault();
+            var formData = new FormData($("#addStaff")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("InsertStaff", "Staffs", new { Area = "Institution" })',          
+                 success: function (response) {
+
+                     if (response.success == true) {
+                         $('#txtMessage').text(response.message);
+                         $('#modalMessage').modal('show');
+                     }
+                     else {
+                         $('#txtMessage').text(response.message);
+                         $('#modalMessage').modal('show');
+                     }
+
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+             });
+    });*@
+    </script>
+}

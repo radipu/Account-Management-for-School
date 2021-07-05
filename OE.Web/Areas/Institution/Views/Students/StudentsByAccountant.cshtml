@@ -1,0 +1,284 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StudentsVM.StudentsByAccountantVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Students List</h1>
+<br />
+<button class="btn btn-success btn-sm " id="btnSearch" name="btnSearch" data-toggle="modal" data-target="#mdlSeach">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    Search
+</button>
+
+<div id="mdlSeach" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Search by class</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Students" asp-action="StudentsByAccountant" method="get">
+                    <select class="form-control"
+                            id="ClassId"
+                            asp-for-id="ClassId"
+                            name="SearchStudentClassId"
+                            asp-items="@(new SelectList (ViewBag.ddlClasses, "Id","Name"))">
+                        <option value="Select  Class">Select  Class</option>
+                        <option value="All class">All class</option>
+                    </select><br />
+                    <button class="btn btn-success btn-md" id="btnSearch" asp-controller="Students" asp-action="StudentsByAccountant" method="get">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        Search
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<br />
+<br />
+@if (ViewBag.searchRequest == false)
+{
+    <b>Search by:   </b> <span class="label label-default">None</span>
+    <br />
+}
+
+else
+{
+
+    if (Model._Students.Count == 0)
+    {
+        <div class="row">
+            <div class="col-lg-10 col-md-10">
+                <b>Search by:   </b>  <span class="label label-default">Class: @Model.ClassName </span>
+            </div>
+        </div>
+        <div class="well"><b>No Record has been matched according to selection.</b></div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-10 col-md-10">
+                <b>Search by:   </b>  <span class="label label-default">Class: @Model.ClassName </span>
+            </div>
+        </div>
+        <div class="fa-pull-right">
+            <a id="Print_AssignedSubjects" class="btn btn-default hidden-print"
+               href="@Url.Action("PrintStudentsList", "Students")"
+               target="_blank">
+                <i class="fa fa-print" aria-hidden="true"></i>
+                Print
+            </a>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>Student Image</th>
+                    <th>  Parents</th>
+                    <th>  Registration No </th>
+                    <th>  Gender </th>
+                    <th>Class & Current year</th>
+                    <th> Year &  Admitted Class </th>
+                    <th>  IsActive </th>
+                    <th>  Action </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model._Students)
+                {
+                    <tr>
+                        <td style="max-width:10px;">@(Model._Students.IndexOf(data) + 1)</td>
+                        <td class="showDetails pointer text-center">
+                            <img src="~/@data.IP300X200" asp-append-version="true" style="height:120px;width:120px;" />
+
+                            @data.StudentName
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.ParentsName
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.RegistrationNo
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.GenderName
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.CurrentClassName <br />
+                            @data.CurrentYear.Value.Year
+                        </td>
+
+
+                        <td class="showDetails pointer">
+                            @data.ClassName <br />
+                            @data.AdmittedYear.Year
+                        </td>
+                        <td class="showDetails pointer">
+                            @if (data.IsActive == true)
+                            {
+                                <h>Yes</h>
+                            }
+                            else
+                            {
+                                <h>No</h>
+                            }
+                        </td>
+                        <td style="max-width:30px;">
+                            <a class="btn btn-primary btn-sm"
+                               asp-area="Institution"
+                               asp-controller="Students"
+                               asp-action="StudentDetailsByAccountant"
+                               asp-route-StudentId="@data.Id">
+                                <i class="fa fa-external-link-alt" aria-hidden="true"></i>
+                                Details
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        
+        <div class="container">
+            @if (pager.TotalPages > 0)
+            {
+                <ul class="pagination justify-content-center">
+                    @if (pager.CurrentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-controller="Students" asp-action="StudentsByAccountant" asp-route-pg="1">First</a>
+                        </li>
+                        <li>
+                            <a class="page-link" asp-controller="Students" asp-action="StudentsByAccountant" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                        </li>
+                    }
+                    @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+                    {
+                        <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                            <a class="page-link" asp-controller="Students" asp-action="StudentsByAccountant" asp-route-pg="@pge">@pge</a>
+                        </li>
+                    }
+                    @if (pager.CurrentPage < pager.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-controller="Students" asp-action="StudentsByAccountant" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                        </li>
+                        <li>
+                            <a class="page-link" asp-controller="Students" asp-action="StudentsByAccountant" asp-route-pg="@(pager.TotalPages)">Last</a>
+                        </li>
+                    }
+                </ul>
+            }
+
+        </div>
+        
+    }
+}
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#editStudentId").val($(this).data("id"));
+            $("#txtEditFirstName").val($(this).data("firstname"));
+            $("#txtEditLastName").val($(this).data("lastname"));
+            $("#txtEditClassId").val($(this).data("className"));
+            $("#txtEditClassId").val($(this).data("classid"));
+            $("#txtEditGenderId").val($(this).data("genderid"));
+            $("#txtEditAdmittedYear").val($(this).data("admittedyear"));
+            $("#txtEditPresentAddress").val($(this).data("presentaddress"));
+            $("#txtEditPermanentAddress").val($(this).data("presentaddress"));
+            $("#txtEditDOB").val($(this).data("dob"));
+            var valid = $(this).data("valid");
+            if (valid == "True") {
+                $('#txtEditIsActive').prop('checked', true);
+            } else {
+                $('#txtEditIsActive').prop('checked', false);
+            }
+
+        });
+        $("#btnSaveNewStudent").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#addStudent")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertStudent", "Students", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+        $("#btnEditStudent").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#editStudent")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("UpdateStudent", "Students")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delStudentid").val($(this).data("id"));
+        });
+        $("#btnDeleteStudent").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#deleteStudentList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteStudent", "Students")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+    </script>
+}

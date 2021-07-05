@@ -1,0 +1,141 @@
+﻿
+@model OE.Web.Areas.Institution.Models.ExpensesVM.CalculateExpensesVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Calculate Expenses</h1>
+
+<button type="button" class="btn btn-success btn-sm" id="btnSearch" name="btnSearch" data-toggle="modal" data-target="#myModal">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    Search
+</button>
+
+<br />
+<br />
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!--modal content-->
+        <div class="modal-content">
+            <!--modal header-->
+            <div class="modal-header">
+                <h4>Search by date</h4>
+                <button type="button" class="close" data-dismiss="modal"></button>
+            </div>
+            <!--modal body-->
+            <div class="modal-body">
+                <form asp-controller="Expenses" asp-action="CalculateExpenses" method="get">
+                    <label>Enter Starting Date</label>
+                    <input type="date" name="StartDate" id="StartDate" class="form-control datetime" placeholder="Enter expense start date">
+                    <hr />
+                    <hr />
+                    <label> Enter Ending Date</label>
+                    <input type="date" name="EndDate" id="EndDate" class="form-control datetime" placeholder="Enter expense end date">
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSearchExpenses">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        Search
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.StartDate != null && Model.EndDate != null)
+{
+    <div class="fa-pull-right">
+        <a id="Print_AssignedSubjects" class="btn btn-default hidden-print"
+           asp-controller="Expenses"
+           asp-action="PrintCalculateExpenses"
+           asp-route-StartDate="@Model.StartDate" asp-route-EndDate="@Model.EndDate">
+            <i class="fa fa-print" aria-hidden="true"></i>
+            Print
+        </a>
+    </div>
+    <h5><b>Starting Date:@Model.StartDate</b></h5>
+    <h5><b>Ending Date:@Model.EndDate</b></h5>
+    <h5><b> Total Expenses : @Model.ammount taka </b></h5>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="max-width:10px;">SN</th>
+                <th>Paying Date </th>
+                <th>Expense type </th>
+                <th>Amount </th>
+                <th>Reason of Expense </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var data in Model._Expenses)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._Expenses.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.Date)
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.ExpenseTypeName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Amount
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Name
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    
+    <div class="container">
+        @if (pager.TotalPages > 0)
+        {
+            <ul class="pagination justify-content-center">
+                @if (pager.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Expenses" asp-action="CalculatedExpenses" asp-route-pg="1">First</a>
+                    </li>
+                    <li>
+                        <a class="page-link" asp-controller="Expenses" asp-action="CalculatedExpenses" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                    </li>
+                }
+                @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+                {
+                    <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                        <a class="page-link" asp-controller="Expenses" asp-action="CalculatedExpenses" asp-route-pg="@pge">@pge</a>
+                    </li>
+                }
+                @if (pager.CurrentPage < pager.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Expenses" asp-action="CalculatedExpenses" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                    </li>
+                    <li>
+                        <a class="page-link" asp-controller="Expenses" asp-action="CalculatedExpenses" asp-route-pg="@(pager.TotalPages)">Last</a>
+                    </li>
+                }
+            </ul>
+        }
+
+    </div>
+  
+}

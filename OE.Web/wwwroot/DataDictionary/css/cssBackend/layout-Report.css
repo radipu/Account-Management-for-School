@@ -1,0 +1,30 @@
+﻿thead {
+    display: table-header-group
+}
+tr {
+    page-break-inside: avoid
+}
+
+tfoot {
+    display: table-row-group
+}
+
+
+
+.print-logo {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    position: center;
+    height: 500px;
+    width: 500px;    
+}
+
+.print-watermark {
+    position: absolute;
+    min-width: 100%;
+    opacity: 0.2;
+    position: center;
+    background-color: transparent;
+    padding-top: 20%;
+}

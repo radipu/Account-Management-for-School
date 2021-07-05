@@ -1,0 +1,488 @@
+﻿
+@model OE.Web.Areas.Institution.Models.FeeTermDescriptionsVM.IndexFeeTermDescriptionsListVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Fee Term Descriptions</h1>
+<br />
+<button type="button" class="btn btn-success btn-sm" id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#modalAdd">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+
+<div id="modalAdd" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!--modal content-->
+        <div class="modal-content">
+            <!--modal header-->
+            <div class="modal-header">
+                <h4>Add Fee Term Descriptions</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!--modal body-->
+            <div class="modal-body">
+                <form asp-action="InsertFeeTermDescriptions" asp-controller="FeeTermDescriptions" method="post" data-ajax="true" enctype="multipart/form-data" id="addFeeTerm">
+
+                    <label> Class </label>
+                    <select class="form-control"
+                            id="addClassId"
+                            asp-for-id="ClassId"
+                            name="FeeTermDescriptions.ClassId"
+                            asp-items="@(new SelectList(ViewBag.ddlClass, "Id", "Name"))">
+                        <option value="Select Class">Select Class</option>
+                    </select>
+                    <br />
+                    <label> Fee Name</label>
+                    <select class="form-control" id="addFeeTypeId" name="FeeTermDescriptions.FeeTypeId" asp-for-id="Id" asp-items="@(new SelectList (String.Empty, "Id","Name"))"></select>
+                    <br />
+                    <label> Term No </label>
+                    <select class="form-control" id="addTermNo" name="FeeTermDescriptions.TermNo" asp-for-id="Id" asp-items="@(new SelectList (String.Empty, "Id","Number"))" placeholder="Enter how many times to pay in a year"></select>
+                    <br />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <label class="control-label" asp-for="FeeTermDescriptions.TermName">Term Name</label>
+                    <input type="text" name="FeeTermDescriptions.TermName" id="TermName" asp-for="FeeTermDescriptions.TermName" class="form-control" placeholder="Enter term name"><br />
+                    <span class="text-danger" asp-validation-for="FeeTermDescriptions.TermName"></span><hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewFeeTerm">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model._FeeTermDescriptions.Count == 0)
+{
+    <br />
+    <br />
+    <div class="well"><b>No record has been matched according to selection.</b></div>
+}
+
+else
+{
+    <br />
+    @if (Model.SearchFeetypeClassId != null)
+    {
+        <h4><b>Class:@Model.SearchClassName</b></h4>
+    }
+    <br />
+    <br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>  Class   </th>
+                <th>Fee Name</th>
+                <th>  Term No </th>
+                <th>  Term Name </th>
+                <th>  Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model._FeeTermDescriptions)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._FeeTermDescriptions.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @data.ClassName
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.FeeType
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.TermNo
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.TermName
+                    </td>
+                    <td style="max-width:30px;">
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                data-id="@data.Id"
+                                data-classid="@data.ClassId"
+                                data-feetypeid="@data.FeeTypeId"
+                                data-feestructureid="@data.FeeStructureId"
+                                data-termno="@data.TermNo"
+                                data-termname="@data.TermName">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+  
+    <div class="container">
+        @if (pager.TotalPages > 0)
+        {
+            <ul class="pagination justify-content-center">
+                @if (pager.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="FeeTermDescriptions" asp-action="FeeTermDescriptionsList" asp-route-pg="1">First</a>
+                    </li>
+                    <li>
+                        <a class="page-link" asp-controller="FeeTermDescriptions" asp-action="FeeTermDescriptionsList" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                    </li>
+                }
+                @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+                {
+                    <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                        <a class="page-link" asp-controller="FeeTermDescriptions" asp-action="FeeTermDescriptionsList" asp-route-pg="@pge">@pge</a>
+                    </li>
+                }
+                @if (pager.CurrentPage < pager.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="FeeTermDescriptions" asp-action="FeeTermDescriptionsList" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                    </li>
+                    <li>
+                        <a class="page-link" asp-controller="FeeTermDescriptions" asp-action="FeeTermDescriptionsList" asp-route-pg="@(pager.TotalPages)">Last</a>
+                    </li>
+                }
+            </ul>
+        }
+
+    </div>
+   
+}
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Fee Term Descriptions</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editFeeTerm">
+                    <input type="hidden" name="FeeTermDescriptions.Id" id="editId">
+                    <label>Class </label>
+                    <select class="form-control"
+                            id="txtEditClassId"
+                            asp-for-id="ClassId"
+                            name="FeeTermDescriptions.ClassId"
+                            asp-items="@(new SelectList (ViewBag.ddlClass, "Id","Name"))">
+                        <option value="Select Student Class">Select Student Class</option>
+                    </select><br />
+                    <label> Fee Name</label>
+                    <select class="form-control" id="EditFeeTypeId" name="FeeTermDescriptions.FeeTypeId" asp-for-id="Id" asp-items="@(new SelectList (String.Empty, "Id","Name"))"></select>
+                    <br />
+                    <label> Term No </label>
+                    <select class="form-control" id="EditTermNo" name="FeeTermDescriptions.TermNo" asp-for-id="Id" asp-items="@(new SelectList (String.Empty, "Id","Number"))"></select>
+                    <br />
+                    <label>Type Name</label>
+                    <input type="text" name="FeeTermDescriptions.TermName" id="EditTermName" required class="form-control"><br />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditFeeTerm">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Fee Term Descriptions</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteFeeTerm">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="FeeTermDescriptionsId" id="delFeeTermid">
+                    <button class="btn btn-md btn-success" id="btnDeleteFeeTerm">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#editId").val($(this).data("id"));
+            $("#txtEditClassId").val($(this).data("classid"));
+
+            $("#EditTermName").val($(this).data("termname"));
+
+            var _classId = $(this).data('classid');
+            var _feeType = $(this).data('feetypeid');
+            var _termNo = $(this).data('termno');
+
+         var feeUrl = '@Url.Action("DropDown_FeeTypes", "FeeTermDescriptions", new { Area = "Institution" })';
+        $.getJSON(feeUrl, { ddlClassId: _classId }, function (jsonResult) {
+                    if (jsonResult.length != 0) {
+                        var item = '<option value="">Select Fee Type</option>';
+                        $("#modalEdit #EditFeeTypeId").empty();
+                        $.each(jsonResult, function (i, row) {
+                            if (row.value == _feeType) {
+                                item += "<option value='" + row.value + "' selected='selected'>" + row.text + "</option>";
+                            } else
+                            item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                        });
+
+                        $('#modalEdit #EditFeeTypeId').html(item);
+                    }
+        });
+            var feeTermUrl = '@Url.Action("DropDown_TermNo", "FeeTermDescriptions", new { Area = "Institution" })';
+
+            $.getJSON(feeTermUrl, { ddlFeeTypeId: _feeType, ClassId: _classId  }, function (jsonResult) {
+                    if (jsonResult.length != 0) {
+                        var item = '<option value="">Select Term No</option>';
+                        $("#modalEdit #EditTermNo").empty();
+                        $.each(jsonResult, function (i, row) {
+                            if (row.value == _termNo) {
+                                item += "<option value='" + row.value + "' selected='selected'>" + row.text + "</option>";
+                            } else
+                            item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                        });
+
+                        $('#modalEdit #EditTermNo').html(item);
+                    }
+        });
+
+        });
+         $("#addClassId").on('change', function () {
+            var url = '@Url.Action("DropDown_FeeTypes", "FeeTermDescriptions", new { Area = "Institution" })';
+            var classId = $('#addClassId').val();
+
+        if (classId != 0) {
+            $.getJSON(url, {ddlClassId: classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = "<option value=''>Select Fee Type</option>";
+                    $("#addFeeTypeId").empty();
+                    $.each(jsonResult, function (i, row) {
+                        item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#addFeeTypeId').html(item);
+
+                }
+                else {
+                    $('#addFeeTypeId').html("<option value=''>Select Fee Type</option>");
+
+                }
+            })
+        }
+        else {
+            $('#addFeeTypeId').html("<option value=''>Select Fee Type</option>");
+
+             }
+
+             $("#addFeeTypeId").on('change', function () {
+            var url = '@Url.Action("DropDown_TermNo", "FeeTermDescriptions", new { Area = "Institution" })';
+                 var FeeTypeId = $('#addFeeTypeId').val();
+
+                 if (FeeTypeId != 0 && classId != 0) {
+            $.getJSON(url, { ddlFeeTypeId: FeeTypeId, ClassId: classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = "<option value=''>Select Term No</option>";
+                    $("#addTermNo").empty();
+                    $.each(jsonResult, function (i, row) {
+                        item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#addTermNo').html(item);
+
+                }
+                else {
+                    $('#addTermNo').html("<option value=''>Select Term No</option>");
+
+                }
+            })
+        }
+        else {
+                     $('#addTermNo').html("<option value=''>Select Term No</option>");
+
+             }
+
+         });
+         });
+
+        @*$("#btnSaveNewFeeTerm").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addFeeTerm")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("InsertFeeTermDescriptions", "FeeTermDescriptions", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });*@
+
+        $("#txtEditClassId").on('change', function () {
+            var url = '@Url.Action("DropDown_FeeTypes", "FeeTermDescriptions", new { Area = "Institution" })';
+            var classId = $('#txtEditClassId').val();
+
+        if (classId != 0) {
+            $.getJSON(url, {ddlClassId: classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = "<option value=''>Select Fee Type</option>";
+                    $("#EditFeeTypeId").empty();
+                    $.each(jsonResult, function (i, row) {
+                        item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#EditFeeTypeId').html(item);
+
+                }
+                else {
+                    $('#EditFeeTypeId').html("<option value=''>Select Fee Type</option>");
+
+                }
+            })
+        }
+        else {
+            $('#EditFeeTypeId').html("<option value=''>Select Fee Type</option>");
+
+             }
+
+            $("#EditFeeTypeId").on('change', function () {
+            var url = '@Url.Action("DropDown_TermNo", "FeeTermDescriptions", new { Area = "Institution" })';
+                var FeeTypeId = $('#EditFeeTypeId').val();
+
+                 if (FeeTypeId != 0 && classId != 0) {
+            $.getJSON(url, { ddlFeeTypeId: FeeTypeId, ClassId: classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = "<option value=''>Select Term No</option>";
+                    $("#EditTermNo").empty();
+                    $.each(jsonResult, function (i, row) {
+                        item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#EditTermNo').html(item);
+
+                }
+                else {
+                    $('#EditTermNo').html("<option value=''>Select Term No</option>");
+
+                }
+            })
+        }
+        else {
+                     $('#EditTermNo').html("<option value=''>Select Term No</option>");
+
+             }
+
+         });
+         });
+        $("#EditFeeTypeId").on('change', function () {
+            var url = '@Url.Action("DropDown_TermNo", "FeeTermDescriptions", new { Area = "Institution" })';
+                var FeeTypeId = $('#EditFeeTypeId').val();
+            var classId = $('#txtEditClassId').val();
+                 if (FeeTypeId != 0 && classId != 0) {
+            $.getJSON(url, { ddlFeeTypeId: FeeTypeId, ClassId: classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = "<option value=''>Select Term No</option>";
+                    $("#EditTermNo").empty();
+                    $.each(jsonResult, function (i, row) {
+                        item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#EditTermNo').html(item);
+
+                }
+                else {
+                    $('#EditTermNo').html("<option value=''>Select Term No</option>");
+
+                }
+            })
+        }
+        else {
+                     $('#EditTermNo').html("<option value=''>Select Term No</option>");
+
+             }
+
+         });
+        $("#btnEditFeeTerm").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#editFeeTerm")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("UpdateFeeTermDescriptions", "FeeTermDescriptions")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+         $(' tr td #btnDelete').on('click', function () {
+             $("#delFeeTermid").val($(this).data("id"));
+        });
+
+
+        $("#btnDeleteFeeTerm").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#deleteFeeTerm")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("DeleteFeeTermDescriptions", "FeeTermDescriptions")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+    </script>
+}

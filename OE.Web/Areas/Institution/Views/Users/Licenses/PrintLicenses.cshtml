@@ -1,0 +1,67 @@
+﻿@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutReport.cshtml";
+}
+
+@using Microsoft.AspNetCore.Http
+@model OE.Web.Areas.Institution.Models.UsersVM.PrintIndexUserAuthenticationsVM
+<div class="informationArea">
+    <img src="~/@Html.Raw(Model.Logo)" class="center-block" />
+    <h3 class="text-center"> @Model.InstitutionName</h3>
+    <h4 class="text-center">@Model.Email</h4>
+    <h4 class="text-center">@Model.Contact</h4>
+    <hr />
+</div>
+<br />
+<h3 class="page-title">Staff Licenses</h3>
+<br />
+
+@if (Model._UsersLicensesList.Count() == 0)
+{
+    <div class="well"><b>No staff license has been created yet.</b></div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover oePage_backend" id="tblGetOELicense">
+            <thead>
+                <tr>
+                    <th class="oeTableTitle">Name</th>
+                    <th class="oeTableTitle">OurEdu Id</th>
+                    <th class="oeTableTitle"> ActorType(s) </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model._UsersLicensesList)
+                {
+                    string Icon_Ok = "<i class=" + "\"fa fa-check \"" + "style =" + " \"font-size:20px;color:green\"" + "></i>";
+                   
+                    <tr>
+                        <td class="showDetails pointer">
+                            <img id="IP300X200" src="~/@item.Users.IP300X200" asp-append-version="true" style="height:80px;width:80px;" />
+                            <br />
+                            @item.Users.FirstName @item.Users.LastName
+                        </td>
+                        <td class="showDetails pointer">
+                            @item.Users.OurEduId
+                        </td>
+                        <td class="showDetails pointer">
+                            <table class="table-bordered table-condensed">
+                                <tbody>
+                                    @foreach (var _2ndItem in item._userAuthenticationList)
+                                    {
+                                        <tr>
+                                            <td style="background-color:blanchedalmond"> @Html.Raw(_2ndItem.IsActive != true ? "" : Icon_Ok) @_2ndItem.ActorName </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

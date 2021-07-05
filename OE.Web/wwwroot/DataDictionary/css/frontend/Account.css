@@ -1,0 +1,59 @@
+﻿.mycontact {
+    margin-top: 100px;
+    font-weightbold;
+   
+}
+
+.formstyle {
+    margin-top: 10px;
+}
+
+.formstyle2 {
+    margin-top: 20px;
+}
+
+}
+/*birthday*/
+fieldset.date {
+    margin: 0;
+    padding: 0;
+    padding-bottom: .5em;
+    display: block;
+    border: none;
+}
+
+    fieldset.date legend {
+        margin: 0;
+        padding: 0;
+        margin-top: .25em;
+        font-size: 100%;
+    }
+
+    fieldset.date label {
+        position: absolute;
+        top: -20em;
+        left: -200em;
+    }
+
+    fieldset.date select {
+        margin: 0;
+        padding: 5px;
+        font-size: 100%;
+        display: inline;
+        padding-left: 20px;
+    }
+
+        fieldset.date select:active,
+        fieldset.date select:focus,
+        fieldset.date select:hover {
+            border-color: gray;
+            background-color: lightyellow;
+        }
+/*birthday*/
+
+.mybutton {
+    background: #6EAB59;
+    color: #FFFFFF;
+    font-weight:bold;
+    font-size:20px;
+}

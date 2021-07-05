@@ -1,0 +1,86 @@
+﻿
+@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutReport.cshtml";
+}
+
+@model OE.Web.Areas.Institution.Models.FeeStructuresVM.PrintIndexFeeStructuresListVM;
+
+<div class="informationArea">
+    <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="center-block" />
+    <h3 class="text-center"> @Model.Institution.Name</h3>
+    <h4 class="text-center">@Model.Institution.Email</h4>
+    <h4 class="text-center">@Model.Institution.ContactNo</h4>
+    <hr />
+</div>
+<br />
+<h3 class="page-title">Fee Structure List</h3>
+
+<br />
+<br />
+
+
+@if (Model._FeeStructures.Count() == 0)
+{
+    <div class="well"><b>No record has been matched according to selection.</b></div>
+}
+else
+{
+    <div class="watermark print-watermark">
+        <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="print-logo" />
+    </div>
+
+    <br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="max-width:10px;">SN</th>
+                <th>Class</th>
+                <th>  Fee Name </th>
+                <th>  Yearly Term </th>
+                <th>  Amount </th>
+                <th>  StartingDate </th>
+                <th>  EndingDate </th>
+                <th>  IsActive </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var data in Model._FeeStructures)
+            {
+
+                <tr>
+                    <td style="max-width:10px;">@(Model._FeeStructures.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @data.Class
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.FeeType
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.FeeTypeMood
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Amount
+                    </td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.StartingYear)
+                    </td>
+                    <td class="showDetails pointer">
+                        @String.Format("{0:dd-MMM-yyyy}", data.EndingYear)
+                    </td>
+                    <td class="showDetails pointer">
+                        @if (data.IsActive == true)
+                        {
+                            <h> Yes</h>
+                        }
+                        else
+                        {
+                            <h>No</h>
+                        }
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}

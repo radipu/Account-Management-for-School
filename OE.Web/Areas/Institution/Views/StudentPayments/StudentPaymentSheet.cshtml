@@ -1,0 +1,256 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StudentPaymentsVM.IndexPaymentDetailByIdVM;
+<h1 class="page-title">Student Payment Sheet</h1>
+<br />
+
+<ol class="breadcrumb" style="background-color:transparent">
+    <li class="breadcrumb-item">
+        <a asp-area="Institution"
+           asp-controller="StudentPayments"
+           asp-action="SearchPaymentDetailById"
+           asp-route-StudentId="@Model.StudentId"
+           asp-route-RegistrationId="@Model.RegistrationId">Student Payment List</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Students Payment Sheet</li>
+</ol>
+
+<div class="col-md-12 row" id="paymentdiv">
+    <form enctype="multipart/form-data" id="addStudentPayment">
+        <input type="hidden" name="StudentPayments.StudentId" id="StudentPaymentId" value="@Model.StudentId" class="form-control" readonly>
+        <input type="hidden" name="StudentPayments.ClassId" id="passClassId" value="@Model.ClassId" required class="form-control">
+        <div style="float: left;width: 266px;">
+            Registration No : <label name="StudentPayments.RegistrationNo" id="StudentPaymentId">@Model.RegistrationId</label>
+        </div>
+        <br />
+        <div style="width: 266px;">
+            Payment Date:
+            <input type="text" name="StudentPayments.PaymentDate" style="width: 266px;" value="@String.Format("{0:dd-MMM-yyyy}", DateTime.Now)" id="AddPaymentDate" required class="form-control datetime">
+        </div>
+        <br />
+        <div style="width: 266px;">
+            <label> Fee Year</label>
+            <input type="hidden" value="@Model.FeeYear" id="ViewFeeYearDate" required class="form-control">
+            <select class="form-control"
+                    name="StudentPayments.FeeYear"
+                    data-studentid="@Model.StudentId"
+                    data-registrationid="@Model.RegistrationId"
+                    style="float: right;width: 266px;" id="AddFeeYearDate"
+                    asp-items="@(new SelectList (ViewBag.ddlYear, "Id","Year"))">
+                <option value="Select  Class">Select  Year</option>
+            </select>
+        </div>
+        <br />
+        <br />
+        <div style="width: 266px;">
+            <label> Class</label>
+            <input class="form-control" id="addClassId" value="@Model.ClassName" style="width: 200px;" name="StudentPayments.FeeTypeId" asp-for-id="Id" />
+        </div>
+        <br />
+        <table class="table table-bordered table-hover" id="tblPayment">
+            <thead>
+                <tr>
+                    <th class="text-center"> SN </th>
+                    <th class="text-center"> Fee Types </th>
+                    <th>Term No </th>
+                    <th class="text-center"> Amount </th>
+                    <th class="text-center"> Discount </th>
+                    <th class="text-center"> Fine </th>
+                    <th class="text-center"> Paid Ammount </th>
+                    <th class="text-center"> Remarks </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model._FeeStructure)
+                {
+                    <tr>
+
+                        @*<td class="showDetails pointer hidden">
+                                <input type="hidden" name="_FeeStructure[@Model._FeeStructure.IndexOf(data)].FeeTypeId" id="_FeeStructure[@Model._FeeStructure.IndexOf(data)].FeeTypeId" value="@data.FeeTypeId">
+                                <input name="_FeeStructure[@Model._FeeStructure.IndexOf(data)].Id" id="_FeeStructure[@Model._FeeStructure.IndexOf(data)].Id" value="@data.Id" />
+                            </td>*@
+
+                        <td class="showDetails pointer text-center">
+                            @( Model._FeeStructure.IndexOf(data) + 1)
+                        </td>
+                        <td class="showDetails pointer text-center">
+                            <input type="hidden" name="_FeeStructure[@Model._FeeStructure.IndexOf(data)].FeeTypeId" id="_FeeStructure[@Model._FeeStructure.IndexOf(data)].FeeTypeId" value="@data.FeeTypeId">
+
+                            <label> @data.FeeType </label>
+                        </td>
+                        <td class="showDetails pointer">
+                            @data.TermName (@data.TermNo)
+                            <input class="form-control" type="hidden" value="@data.FeeTermDescriptionId" id="_FeeStructure[@Model._FeeStructure.IndexOf(data)].TermNo" name="_FeeStructure[@Model._FeeStructure.IndexOf(data)].TermNo" />
+                        </td>
+                        <td class="showDetails pointer">
+                            <label>@data.Amount</label>
+                        </td>
+                        <td class="showDetails pointer text-center">
+                            <label>@data.DiscountAmount</label>
+                        </td>
+                        <td class="showDetails pointer text-center" style="width:100px">
+                            <input class="form-control" type="number" value="@data.Fine" id="_FeeStructure[@Model._FeeStructure.IndexOf(data)].Fine" name="_FeeStructure[@Model._FeeStructure.IndexOf(data)].Fine" />
+                        </td>
+                        <td class="showDetails pointer text-center" style="width:100px">
+                            <input class="form-control" type="number" data-amount="@(data.Amount - data.DiscountAmount)" value="@data.PaidAmount" id="_FeeStructure[@Model._FeeStructure.IndexOf(data)].PaidAmount" name="_FeeStructure[@Model._FeeStructure.IndexOf(data)].PaidAmount" />
+                        </td>
+                        <td class="showDetails pointer text-center">
+                            <input class="form-control" type="text" value="@data.Remarks" id="_FeeStructure[@Model._FeeStructure.IndexOf(data)].Remarks" name="_FeeStructure[@Model._FeeStructure.IndexOf(data)].Remarks" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <hr />
+        <button class="btn btn-success btn-md" id="btnSaveNewStudentPayment">
+            <i class="fa fa-save" aria-hidden="true"></i>
+            Save
+        </button>
+        <button class="btn btn-danger btn-md " data-dismiss="modal">
+            <i class="fa fa-times" aria-hidden="true"></i>
+            Cancel
+        </button>
+    </form>
+</div>
+
+@section Scripts
+    {
+
+    <script type="text/javascript">
+
+        $("tr td #AddPaidAmount").on('keypress', function (e) {
+            var amount = $(this).data("amount");
+            var keyCode = e.keyCode == 0 ? e.charCode : e.keyCode;
+            var value = Number(e.target.value + e.key) || 0;
+                if ((keyCode >= 37 && keyCode <= 40) || (keyCode == 8 || keyCode == 9 || keyCode == 13) || (keyCode >= 48 && keyCode <= 57)) {
+                    return (1 <= value && value <= amount);
+               }
+                return false;
+        });
+        $("#AddFeeYearDate").val($("#ViewFeeYearDate").val());
+        $("#AddFeeYearDate").on('change', function (e) {
+            e.preventDefault();
+           var feetypeurl = '@Url.Action("StudentPaymentSheet", "StudentPayments", new { Area = "Institution" })';
+            var year = $('#AddFeeYearDate').val();
+            var studentid = $(this).data("studentid");
+            var RegistrationId = $(this).data("registrationid");
+            $.ajax({
+                type: 'POST',
+                data: { year: year, studentId: studentid },
+                dataType: 'json',
+                cache: false,
+                url: '@Url.Action("DropDown_Class", "StudentPayments", new { Area = "Institution" })',
+                success:
+                    function (response) {
+                        if (response.id != 0) {
+                            
+                            $("#addClassId").val(response.name);
+                            $("#passClassId").val(response.id);
+                            var classId = response.id;
+                            var urlReload = '@Url.Action("StudentPaymentSheet", "StudentPayments")' + '?StudentId=' + studentid + '&RegistrationId=' + RegistrationId + '&ClassId=' + classId + '&ClassYear=' + year;
+                            location.replace(urlReload);
+                        }
+                       else {
+                            $('#addClassId').val('');
+                        }
+                    },
+                error: function (data) {
+                },
+                complete: function (data) {
+                }
+             });
+        });
+        $("#addFeeTypeId").on('change', function () {
+            var url = '@Url.Action("DropDown_StudentDiscount", "StudentPayments", new { Area = "Institution" })';
+            var url1 = '@Url.Action("DropDown_FeeAmount", "StudentPayments", new { Area = "Institution" })';
+            var feeTypeId = $('#addFeeTypeId').val();
+            if (feeTypeId != 0) {
+                $.getJSON(url, { ddlFeeType: feeTypeId }, function (jsonResult) {
+                    if (jsonResult.length != 0) {
+                        $('#discountPortion').show();
+                        $('#addDiscountId').html(jsonResult.amount);
+                    }
+                    else {
+                        $('#addDiscountId').html("");
+                    }
+                });
+                $.getJSON(url1, { ddlFeeType: feeTypeId }, function (result) {
+                    if (result.length != 0) {
+                        $('#addAmount').val(result.amount);
+                    }
+                    else {
+                        $('#addAmount').val("");
+                    }
+                });
+        }
+        else {
+            $('#addDiscountId').html("<option value=''>Select Discount</option>");
+        }
+        });
+        $("#NewFeeTypeId").on('change', function () {
+            var url = '@Url.Action("DropDown_StudentDiscount", "StudentPayments", new { Area = "Institution" })';
+            var url1 = '@Url.Action("DropDown_FeeAmount", "StudentPayments", new { Area = "Institution" })';
+            var feeTypeId = $('#NewFeeTypeId').val();
+            if (feeTypeId != 0) {
+                $.getJSON(url, { ddlFeeType: feeTypeId }, function (jsonResult) {
+                    if (jsonResult.length != 0) {
+                        $('#discountPortion').show();
+                        $('#addDiscountId').html(jsonResult.amount);
+                    }
+                    else {
+                        $('#addDiscountId').html("");
+                    }
+                });
+                $.getJSON(url1, { ddlFeeType: feeTypeId }, function (result) {
+                    if (result.length != 0) {
+                        $('#addAmount').val(result.amount);
+                    }
+                    else {
+                        $('#addAmount').val("");
+                    }
+                });
+        }
+        else {
+            $('#addDiscountId').html("<option value=''>Select Discount</option>");
+        }
+        });
+        $("#btnSaveNewStudentPayment").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#addStudentPayment")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertStudentPayment", "StudentPayments", new { Area = "Institution" })',
+                success: function (response) {
+                    alert("saved");
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });
+        $(function () {
+            enable_cb();
+            $("#FeeTypeAmmount").click(enable_cb);
+        });
+        function enable_cb() {
+            var total = 0;
+            if (this.checked) {
+                $("#FeeTypeId").val($(this).data("feeid"));
+                $('#PaidAmount').each(function () {
+                var Amount = $('input#PaidAmount').val();
+                    total += parseInt(Amount);
+                    $("#TotalAmmount").html(total);
+             });
+
+            } else {
+
+                }
+        }
+    </script>
+}

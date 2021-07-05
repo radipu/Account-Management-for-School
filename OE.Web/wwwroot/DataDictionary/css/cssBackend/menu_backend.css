@@ -1,0 +1,311 @@
+﻿
+
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+    .sticky + .content {
+        padding-top: 60px;
+    }
+
+.custom-color {
+    /*background: #30b718;*/
+    background: green;
+}
+
+.top-content {
+    margin: 1% 0;
+}
+
+.top-bar {
+    background: green;
+    padding: 6px 0;
+}
+
+.top-ber p {
+    margin: 0 auto;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: sans-serif;
+}
+.masterPageSection {
+    /* riaz-210126*/
+     background: #e9ebee;
+   
+    /* ~riaz-210126*/
+}
+
+.page-title {
+    /* riaz-210126*/
+    /* background: #e9ebee;*/
+    border-bottom: .05em solid #c6dbf1;
+    padding: 10px 0;
+    margin: .5em 0;
+    font-size: 1.4em;
+    font-weight: bold;
+    /* ~riaz-210126*/
+}
+
+.sticky-tabs {
+    background: beige;
+}
+
+.no-padding {
+    padding: 0 !important;
+}
+
+.sticky-tabs.sticky {
+    z-index: 1000;
+}
+
+.tab-title li {
+    list-style: none;
+    float: left;
+    padding: 1% 3%;
+    border: 1px solid #dddfe2;
+    border-radius: 3px;
+    border-right: none;
+    cursor: pointer;
+}
+
+    .tab-title li:last-child {
+        border-right: 1px solid #dddfe2;
+    }
+
+    .tab-title li.active a {
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: bold;
+        color: inherit;
+    }
+
+    .tab-title li.active {
+        background: #e9ebee;
+        border-bottom: none;
+        cursor: default;
+    }
+
+/*menu */
+.tabcontent .left-bar {
+    padding-top: 2%;    
+    position: sticky;
+    top: 35px;
+    padding-right: 0;
+}
+
+.dropdown-btn.active .sub-menu-list {
+    display: block;
+}
+
+.dropdown-btn .sub-menu-list {
+    display: none;
+}
+
+.left-bar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-list .list-item a {
+    padding: 2%;
+    display: flex;
+    flex: 1 1 0px;
+}
+
+.menu-list .list-item:hover {
+    background-color: #f5f6f7;
+    border: 1px solid #dddfe2;
+    border-radius: 3px;
+}
+
+.dropdown-btn.active {
+    background-color: #f5f6f7;
+    border: 1px solid #dddfe2;
+    border-radius: 3px;
+}
+
+.menu-title {
+    background: #f5f6f7;
+    margin: 0;
+    padding: 1%;
+    font-family: sans-serif;
+    font-size: 30px;
+    text-align: center;
+    border: 1px solid #dddfe2;
+    border-radius: 3px;
+    margin-bottom: 5%;
+}
+
+.menu-list .list-item a {
+    color: inherit;
+}
+
+.menu-list > .list-item > a {
+    padding: 5%;
+}
+
+.menu-list > .list-item > .icon {
+    margin-top: 7px;
+}
+
+.menu-list .list-item a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.dropdown-btn .arrow {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    right: 10px;
+    margin-top: 1%;
+    background: url(../../images/common_icons_backend.png);
+    background-position: 0px 0px;
+}
+
+.dropdown-btn.active .arrow {
+    background-position: -16px -1px;
+}
+
+.dr-menu {
+    position: absolute;
+    width: 90%;
+    height: 85vh;
+    display: block;
+    overflow: auto;
+}
+
+.menu-list .icon {
+    width: 26px;
+    height: 25px;
+    background: url(../../images/menu_icons_backend.png);
+    float: left;
+    margin-top: 2px;
+}
+
+.menu-list .dropdown-btn {
+    cursor: pointer;
+}
+
+.banner-img {
+    margin-top: 1.3%;
+}
+
+.list-item .home {
+    background-position: 56px -30px;
+}
+
+.list-item .management {
+    background-position: -4px -97px;
+}
+
+.list-item .accounts {
+    background-position: -5px -34px;
+}
+
+.list-item .teacher {
+    background-position: 26px -65px;
+}
+
+.list-item .student {
+    background-position: 82px -66px;
+}
+
+.list-item .result {
+    background-position: 110px -2px;
+}
+
+.list-item .studentDiscount {
+    background-position: 136px -2px;
+}
+
+.list-item .feeStructure {
+    background-position: -5px -68px;
+}
+
+.list-item .about {
+    background-position: 84px -2px;
+}
+
+.list-item .contact {
+    background-position: 57px -2px;
+}
+
+.list-item .staff {
+    background-position: 108px -66px;
+}
+
+.list-item .school {
+    background-position: 134px -64px;
+}
+
+.list-item .debit {
+    background-position: -34px -32px;
+}
+
+.list-item .credit {
+    background-position: 29px -1px;
+}
+
+.list-item .feeType {
+    background-position: -64px -33px;
+}
+
+.list-item .student-payment {
+    background-position: -88px -31px;
+}
+
+.list-item .student-list {
+    background-position: 55px -67px;
+}
+
+.list-item .manage-student {
+    background-position: 29px -30px;
+}
+
+.list-item .view-result {
+    background-position: 103px -95px;
+}
+
+.list-item .manage-result {
+    background-position: 76px -97px;
+}
+
+.list-item .view-profile {
+    background-position: 51px -95px;
+}
+
+.list-item .part-time {
+    background-position: -4px 1px;
+}
+
+.list-item .update-profile {
+    background-position: 26px -95px;
+}
+
+.list-item .gender {
+    background-position: -3px -124px;
+}
+
+.menu-list .sub-menu-list {
+    padding: 5%;
+    border-top: 1px solid #dddfe2;
+}
+
+.tabcontent .right-content {
+    /* [RIAZ-2-210126]*/
+    /*background: #f5f6f7;
+    margin: 2% 0;
+    border: 1px solid #dddfe2;
+    border-radius: 3px;
+    padding: 0;*/
+    /*// margin-left: 180px;*/
+    margin: 2% 0;
+    padding-bottom: 25px;
+    /* max-width: 950px;*/
+    float: left;
+    background-color: #ffffff;
+    /* [~RIAZ-2-210126]*/
+}

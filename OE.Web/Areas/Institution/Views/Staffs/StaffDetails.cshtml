@@ -1,0 +1,74 @@
+﻿
+@model OE.Web.Areas.Institution.Models.StaffsVM.StaffDetailsVM;
+
+    <ol class="breadcrumb" style="background-color:transparent">
+        <li class="breadcrumb-item">
+            <a asp-area="Institution"
+               asp-controller="Staffs"
+               asp-action="StaffsListByAdmin">Staff List</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Staff Details</li>
+    </ol>
+    
+<br />
+<h1 class="page-title">Staff Details</h1>
+
+<br />
+<table class="table table-bordered table-hover">
+    <tr>
+        <td>
+            ID:
+        </td>
+        <td style="max-width:10px;">@Model.Staffs.Id</td>
+    </tr>
+    <tr>
+        <td>
+            Designation:
+        </td>
+
+        <td class="showDetails pointer">
+            @Model.Staffs.Designation
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Name:
+        </td>
+        <td class="showDetails pointer">
+            @Model.Staffs.Name
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Cell:
+        </td>
+
+        <td class="showDetails pointer">
+            @Model.Staffs.Cell
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Education:
+        </td>
+        <td class="showDetails pointer">
+            @Model.Staffs.Education
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Email:
+        </td>
+        <td class="showDetails pointer">
+            @Model.Staffs.Email
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Address:
+        </td>
+        <td class="showDetails pointer">
+            @Model.Staffs.Address
+        </td>
+    </tr>
+</table>

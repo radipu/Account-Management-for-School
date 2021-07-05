@@ -1,0 +1,18 @@
+﻿@model OE.Web.Areas.Institution.Models.UsersVM.IndexUsersVM
+@using Microsoft.AspNetCore.Http;
+@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutMain.cshtml";
+    ViewData["Title"] = "Index";
+}
+<h1 class="page-title">Dashboard</h1>
+<div class="container col-lg=12 col-md-12 col-xm-12 co-sm-12">
+
+    <span stle="display: inline-block;">
+        <img src="~/ClientDictionary/rahim.png" asp-append-version="true" alt="User Profile Picture" style=" width: 150px; height: 100px;" />
+    </span>
+
+    <span style="display: inline-block; margin-left:5px; ">
+        <b> Welcome @Context.Session.GetString("session_UserName")</b>
+    </span>
+
+</div>

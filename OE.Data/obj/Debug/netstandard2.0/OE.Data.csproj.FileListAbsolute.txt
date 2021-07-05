@@ -1,0 +1,13 @@
+F:\OurEduProjects\OurEdu_My Work\OE.Data\bin\Debug\netstandard2.0\OE.Data.deps.json
+F:\OurEduProjects\OurEdu_My Work\OE.Data\bin\Debug\netstandard2.0\OE.Data.dll
+F:\OurEduProjects\OurEdu_My Work\OE.Data\bin\Debug\netstandard2.0\OE.Data.pdb
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\OE.Data.AssemblyInfoInputs.cache
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\OE.Data.AssemblyInfo.cs
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\OE.Data.csproj.CoreCompileInputs.cache
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\staticwebassets\OE.Data.StaticWebAssets.Manifest.cache
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\staticwebassets\OE.Data.StaticWebAssets.xml
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\scopedcss\bundle\OE.Data.styles.css
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\OE.Data.RazorTargetAssemblyInfo.cache
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\OE.Data.dll
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\OE.Data.pdb
+F:\OurEduProjects\OurEdu_My Work\OE.Data\obj\Debug\netstandard2.0\OE.Data.csprojAssemblyReference.cache

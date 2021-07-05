@@ -1,0 +1,72 @@
+﻿
+@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutReport.cshtml";
+}
+
+@model OE.Web.Areas.Institution.Models.StaffsVM.IndexStaffsListVM;
+
+@*<div class="informationArea">
+    <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="center-block" />
+    <h3 class="text-center"> @Model.Institution.Name</h3>
+    <h4 class="text-center">@Model.Institution.Email</h4>
+    <h4 class="text-center">@Model.Institution.ContactNo</h4>
+    <hr />
+</div>*@
+<br />
+<h3 class="page-title">Staff List</h3>
+
+<br />
+<br />
+
+
+@if (Model._Staffs.Count() == 0)
+{
+    <div class="well"><b>No Record has been matched according to selection.</b></div>
+}
+
+else
+{
+    @*<div class="watermark print-watermark">
+        <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="print-logo" />
+    </div>*@
+
+    <br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="max-width:10px;">SN</th>
+                <th> Designation</th>
+                <th>  Name </th>
+                <th>  Cell </th>
+                <th>  Email </th>
+                <th>  Address </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var data in Model._Staffs)
+            {
+
+                <tr>
+                    <td style="max-width:10px;">@(Model._Staffs.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @data.Designation
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Name
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Cell
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Email
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Address
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}

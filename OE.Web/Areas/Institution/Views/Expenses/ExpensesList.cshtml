@@ -1,0 +1,316 @@
+﻿
+@model OE.Web.Areas.Institution.Models.ExpensesVM.IndexExpensesListVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Expenses List</h1>
+<br />
+<button type="button" class="btn btn-success btn-sm" id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#myModal">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--modal header-->
+            <div class="modal-header">
+                <h4>Add new expense</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!--modal body-->
+            <div class="modal-body">
+                <form asp-action="InsertExpense" asp-controller="Expenses" method="post" data-ajax="true" enctype="multipart/form-data" id="addExpenses">
+                    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                    <label class="control-label" asp-for="Expenses.Date">Paying Date</label>
+                    <input type="date" name="Expenses.Date" id="PayingDate" asp-for="Expenses.Date" class="form-control datetime" placeholder="Enter paying date">
+                    <span class="text-danger" asp-validation-for="Expenses.Date"></span>
+                    <hr />
+                    <label> Expenses Type</label>
+                    <select class="form-control"
+                            id="ExpenseTypeId"
+                            asp-for-id="ExpenseTypeId"
+                            name="Expenses.ExpenseTypeId"
+                            asp-items="@(new SelectList(ViewBag.ddlExpenseType, "Id", "Name"))">
+                        <option value="Select Expense Type">Select Expense Type</option>
+                    </select>
+                    <hr />
+                    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                    <label class="control-label" asp-for="Expenses.Amount">Amount</label>
+                    <input type="number" name="Expenses.Amount" id="Amount" asp-for="Expenses.Amount" class="form-control" placeholder="Enter expense amount">
+                    <span class="text-danger" asp-validation-for="Expenses.Amount"></span>
+                    <hr />
+                    <label> Reason of Expenses</label>
+                    <input type="text" name="Expenses.Name" id="ExpenseName" required class="form-control" placeholder="Enter reason for expense">
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewExpenses">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="fa-pull-right">
+    <a id="Print_AssignedSubjects" class="btn btn-default hidden-print"
+       href="@Url.Action("PrintExpensesList", "Expenses")"
+       target="_blank">
+        <i class="fa fa-print" aria-hidden="true"></i>
+        Print
+    </a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="max-width:10px;">SN</th>
+            <th>Paying Date </th>
+            <th>Expense Type </th>
+            <th>Amount</th>
+            <th>Reason of Expenss</th>
+            <th style="max-width:30px;">  Action </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var data in Model._Expenses)
+        {
+
+            <tr>
+                <td style="max-width:10px;">@(Model._Expenses.IndexOf(data) + 1)</td>
+                <td class="showDetails pointer">
+                    @String.Format("{0:dd-MMM-yyyy}", data.Date)
+                </td>
+                <td class="showDetails pointer">
+                    @data.ExpenseTypeName
+                </td>
+                <td class="showDetails pointer">
+                    @data.Amount
+                </td>
+                <td class="showDetails pointer">
+                    @data.Name
+                </td>
+                <td style="max-width:30px;">
+                    <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                            data-id="@data.Id"
+                            data-date="@String.Format("{0:dd-MMM-yyyy}", data.Date)"
+                            data-expenseType="@data.ExpenseTypeName"
+                            data-expensetypeid="@data.ExpenseTypeId"
+                            data-amount="@data.Amount"
+                            data-name="@data.Name">
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                        Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="container">
+    @if (pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-center">
+            @if (pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Expenses" asp-action="ExpensesList" asp-route-pg="1">First</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="Expenses" asp-action="ExpensesList" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+            @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+            {
+                <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                    <a class="page-link" asp-controller="Expenses" asp-action="ExpensesList" asp-route-pg="@pge">@pge</a>
+                </li>
+            }
+            @if (pager.CurrentPage < pager.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Expenses" asp-action="ExpensesList" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="Expenses" asp-action="ExpensesList" asp-route-pg="@(pager.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+
+</div>
+
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit expenses type</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editExpense">
+                    <input type="hidden" name="Expenses.Id" id="editExpenseId">
+                    <label> Paying Date</label>
+                    <input type="text" name="Expenses.Date" id="txtEditPayingDate" required class="form-control datetime">
+                    <hr />
+                    <label> Expense Type</label>
+                    <select class="form-control"
+                            id="editExpenseTypeId"
+                            asp-for-id="ExpenseTypeId"
+                            name="Expenses.ExpenseTypeId"
+                            asp-items="@(new SelectList(ViewBag.ddlExpenseType, "Id", "Name"))">
+                        <option value="0">Select Expense Type</option>
+                    </select>
+                    <hr />
+                    <label> Amount</label>
+                    <input type="number" name="Expenses.Amount" id="txtEditAmount" required class="form-control">
+                    <hr />
+                    <label> Reason of Expense</label>
+                    <input type="text" name="Expenses.Name" id="txtEditClassesName" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditExpense">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete  Expense</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteExpenseList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="ExpenseId" id="delExpenseid">
+                    <button class="btn btn-md btn-success" id="btnDeleteExpense">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#editExpenseId").val($(this).data("id"));
+            $("#txtEditPayingDate").val($(this).data("date"));
+            $("#txtEditAmount").val($(this).data("expenseType"));
+            $("#editExpenseTypeId").val($(this).data("expensetypeid"));
+            $("#txtEditAmount").val($(this).data("amount"));
+            $("#txtEditClassesName").val($(this).data("name"));
+        });
+
+        @*$("#btnSaveNewExpenses").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#addExpenses")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertExpense", "Expenses", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });*@
+
+        $("#btnEditExpense").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#editExpense")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("UpdateExpense", "Expenses")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delExpenseid").val($(this).data("id"));
+        });
+
+
+        $("#btnDeleteExpense").on('click', function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#deleteExpenseList")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("DeleteExpense", "Expenses")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+    </script>
+}

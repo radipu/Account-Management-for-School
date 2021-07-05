@@ -1,0 +1,45 @@
+﻿
+@model OE.Web.Models.IndexAboutVM
+<div class="panel-group" id="accordion">
+    
+    @foreach (var item in Model.StaffTypeList)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#@item.Id">
+                        <b>@item.Name</b>
+                    </a>
+                </h4>
+            </div>
+            <div id="@item.Id" class="panel-collapse collapse ">
+                <div class="panel-body">
+                    @foreach (var insideItem in Model.StaffList)
+                    {
+                        @if (insideItem.StaffTypeId == item.Id)
+                        {
+
+                            <div class="media">
+                                <div class="media-left media-middle">
+                                    <img class="img-rounded" alt="Picture of @item.Name" src="~/@insideItem.IP300X200" height="200" width="200" />
+                                </div>
+                                <div class="media-body desig">
+                                    <b>@insideItem.FirstName @insideItem.LastName</b>
+                                    <br />
+                                    @insideItem.Designation
+                                    <br />
+                                    OurEdu
+                                    <br />
+                                    @insideItem.Email
+                                </div>
+                            </div>
+                        }
+
+                    }
+                </div>
+            </div>
+        </div>
+
+    }
+</div>
+

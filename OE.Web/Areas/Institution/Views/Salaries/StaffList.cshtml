@@ -1,0 +1,220 @@
+﻿
+@model OE.Web.Areas.Institution.Models.SalariesVM.IndexStaffListVM;
+<h1 class="page-title">Staffs List</h1>
+
+@*<button type="button" class="btn btn-success btn-sm" id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#myModal">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+        Add
+    </button>
+
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            modal content
+            <div class="modal-content">
+                modal-header
+                <div class="modal-header">
+                    <h4>Add new staff</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                modal body
+                <div class="modal-body">
+                    <form enctype="multipart/form-data" id="addStaff">
+                        <label> Designation </label>
+                        <select class="form-control"
+                                id="DesignationId"
+                                asp-for-id="DesignationId"
+                                name="Staffs.DesignationId"
+                                asp-items="@(new SelectList (ViewBag.ddlDesignations, "Id","Name"))">
+                            <option value="Select Designation">Select Designation</option>
+                        </select><br />
+                        <label> FirstName</label>
+                        <input type="text" name="Staffs.FirstName" id="ClassName" required class="form-control"><br />
+                        <label> LastName</label>
+                        <input type="text" name="Staffs.LastName" id="LastName" required class="form-control"><br />
+
+                        <label>
+                            Image :
+                            <a tabindex="0" data-toggle="popover" data-trigger="focus" data-container="body" title="Tip: Image Upload" data-content="Standard image size for Students: Width= 300px Height= 200px.">
+                                <span class="glyphicon glyphicon-info-sign" style="top:5px; font-size:larger"></span>
+                            </a>
+                        </label>
+                        <input type="file" name="Staffs.fleImage" id="fleAddIP300X200" class="form-control">
+                        <span id="errAddMsg" class="alert-danger"></span>
+                        <br />
+                        <div id="addImagBlock" style="display:none">
+                            <img id="fleAddImgPreView" src="" style="width:200px; height:150px; border:10px;" asp-append-version="true"><br /><br />
+                            <a href="#" class="btn btn-danger" onclick="ClrAddPreview()"><i class="glyphicon glyphicon-trash"></i></a>
+                            <br />
+                        </div>
+                        <label>Gender</label>
+                        <select class="form-control"
+                                id="GenderId"
+                                asp-for-id="GenderId"
+                                name="Staffs.GenderId"
+                                asp-items="@(new SelectList (ViewBag.ddlGenders, "Id","Name"))">
+                            <option value="Select Gender">Select Gender</option>
+                        </select>
+                        <hr />
+
+                        <label> Cell</label>
+                        <input type="text" name="Staffs.Cell" id="Cell" required class="form-control"><br />
+                        <label> Email</label>
+                        <input type="text" name="Staffs.Email" id="Email" required class="form-control"><br />
+                        <label> Address</label>
+                        <input type="text" name="Staffs.Address" id="Address" required class="form-control"><br />
+                        <hr />
+                        <button class="btn btn-success btn-md" id="btnSaveNewStaff">
+                            <i class="fa fa-save" aria-hidden="true"></i>
+                            Save
+                        </button>
+                        <button class="btn btn-danger btn-md " data-dismiss="modal">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+<br />
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>SN</th>
+            <th>  Image </th>
+            <th>  Name </th>
+            <th>  Salary <br /> year </th>
+            <th>
+                Yearly<br />Term No
+            </th>
+            <th>
+                Overall<br />Salary
+            </th>
+            <th>  Action </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var data in Model._Staffs)
+        {
+            <tr>
+                <td style="max-width:10px;">@(Model._Staffs.IndexOf(data) + 1)</td>
+                <td class="showDetails pointer text-center">
+                    <img src="~/@data.IP300X200" asp-append-version="true" style="height:120px;width:120px;" />
+                </td>
+                <td class="showDetails pointer">
+                    @data.Name <br />
+                    ( @data.Designation )
+                </td>
+                <td class="showDetails pointer">
+                    @data.SalaryYear.Year
+                </td>
+                <td class="showDetails pointer">
+                    @data.YearlyTermNo
+                </td>
+                <td class="showDetails pointer">
+                    @data.NetSalary
+                </td>
+
+
+
+                <td style="max-width:30px;">
+                    <a class="btn btn-primary btn-sm"
+                       asp-area="Institution"
+                       asp-controller="Salaries"
+                       asp-action="SalariesList"
+                       asp-route-staffId="@data.Id"
+                       asp-route-salaryYear="@data.SalaryYear.Year">
+                        <i class="fa fa-external-link-alt" aria-hidden="true"></i>
+                        Salaries
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        $('tr td #btnEdit').on('click', function () {
+            $("#editStaffId").val($(this).data("id"));
+            $("#txtEditDesignationId").val($(this).data("designationid"));
+            $("#txtEditFirstName").val($(this).data("firstname"));
+            $("#txtEditLastName").val($(this).data("lastname"));
+            $("#txtEditIP300X200").val($(this).data("ip300x200"));
+            $("#txtEditGenderId").val($(this).data("genderid"));
+            $("#txtEditCell").val($(this).data("cell"));
+            $("#txtEditEmail").val($(this).data("email"));
+            $("#txtEditAddress").val($(this).data("address"));
+            var imageVersionNo = Math.random();
+            var imageWithVersion = "/" + $(this).data('ip300x200') + "?v=" + imageVersionNo;
+            $('#modalEdit #editIP300X200').attr('src', imageWithVersion); //[NOTE: for Display]
+        });
+
+        $('#fleEditIP300X200').on('change', function () {
+            var imageFile = window.URL.createObjectURL(this.files[0]);
+            $('#modalEdit #editIP300X200').attr('src', imageFile);   //[NOTE: for Display]
+            $('#modalEdit #editIP300X200').show();
+            $('#modalEdit #txtEditIP300X200').val(imageFile.FileName); //[NOTE: for hidden]
+        });
+        var ClrEditPreview = function () {
+            $("#editImagBlock").hide();
+            $("#fleEditIP300X200").val('');
+            $('#txtEditIP300X200').val('');
+        }
+        $('#fleAddIP300X200').on('change', function () {
+            var imageFile = window.URL.createObjectURL(this.files[0]);
+            $('#mdlAdd #fleAddImgPreView').attr('src', imageFile);   //[NOTE: for Display]
+            $('#mdlAdd #addImagBlock').show();
+        });
+
+
+        $("#btnEditStaff").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#editStaff")[0]);
+             $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("UpdateStaff", "Staffs")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delStaffid").val($(this).data("id"));
+        });
+
+        $("#btnDeleteStaff").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#deleteStaffList")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("DeleteStaff", "Staffs")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+                });
+        });
+    </script>
+}

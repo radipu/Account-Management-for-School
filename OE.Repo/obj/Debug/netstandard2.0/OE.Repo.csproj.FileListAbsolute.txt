@@ -1,0 +1,16 @@
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\bin\Debug\netstandard2.0\OE.Repo.deps.json
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\bin\Debug\netstandard2.0\OE.Repo.dll
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\bin\Debug\netstandard2.0\OE.Repo.pdb
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\bin\Debug\netstandard2.0\OE.Data.dll
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\bin\Debug\netstandard2.0\OE.Data.pdb
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\OE.Repo.csprojAssemblyReference.cache
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\OE.Repo.AssemblyInfoInputs.cache
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\OE.Repo.AssemblyInfo.cs
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\OE.Repo.csproj.CoreCompileInputs.cache
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\staticwebassets\OE.Repo.StaticWebAssets.Manifest.cache
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\staticwebassets\OE.Repo.StaticWebAssets.xml
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\scopedcss\bundle\OE.Repo.styles.css
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\OE.Repo.RazorTargetAssemblyInfo.cache
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\OE.Repo.csproj.CopyComplete
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\OE.Repo.dll
+F:\OurEduProjects\OurEdu_My Work\OE.Repo\obj\Debug\netstandard2.0\OE.Repo.pdb

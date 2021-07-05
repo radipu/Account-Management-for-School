@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Http;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <environment names="Development">
+        <!--[NOTE:Default CSS Files]-->
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link href="~/DataDictionary/css/cssBackend/layout-Report.css" rel="stylesheet" />
+        <script src="~/lib/jquery/dist/jquery.js"></script> <!--[NOTE:should not be here. findout the issue later]-->
+    </environment>
+
+    <environment names="Staging,Production">
+        <!--[NOTE:Default CSS Files]-->
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link href="~/DataDictionary/css/cssBackend/layout-Report.css" rel="stylesheet" />
+        <script src="~/lib/jquery/dist/jquery.js"></script> <!--[NOTE:should not be here. findout the issue later]-->
+    </environment>
+
+</head>
+
+<body>
+    @RenderBody()
+    <environment names="Development">
+        @*<script src="~/lib/jquery/dist/jquery.js"></script>*@
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        @*<script src="~/lib/jquery/dist/jquery.js"></script>*@
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    </environment>
+    
+    @RenderSection("Scripts", required: false)
+
+
+</body>
+</html>

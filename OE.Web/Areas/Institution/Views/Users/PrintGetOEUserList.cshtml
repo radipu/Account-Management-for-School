@@ -1,0 +1,65 @@
+﻿@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutReport.cshtml";
+}
+@if (ViewBag.OeErrorMessage != null)
+{
+    @ViewBag.OeErrorMessage;
+}
+else
+{
+    @model OE.Web.Areas.Institution.Models.UsersVM.PrintIndexUsersListVM
+    <div class="informationArea">
+        <img src="~/@Html.Raw(Model.Logo)" class="center-block" />
+        <h3 class="text-center"> @Model.InstitutionName</h3>
+        <h4 class="text-center">@Model.Email</h4>
+        <h4 class="text-center">@Model.Contact</h4>
+        <hr />
+    </div>
+    <br />
+    <h3 class="page-title">Users </h3>
+
+
+    @if (Model._oeusers.Count == 0)
+    {
+        <div class="well"><b>No record has been matched according to selection.</b></div>
+    }
+    else
+    {
+        <br />
+        <div class="watermark print-watermark">
+            <img src="~/@Html.Raw(Model.Logo)" class="print-logo" />
+        </div>
+        <table class="table table-bordered table-hover oePage_backend">
+            <thead>
+                <tr>
+                    <th class="oeTableTitle"> #SN </th>
+                    <th class="oeTableTitle">Picture</th>
+                    <th class="oeTableTitle"> Name </th>
+                    <th class="oeTableTitle">OurEduId</th>
+                    <th class="oeTableTitle">Last Logout Date</th>
+                    <th> class="oeTableTitle"Last Entry Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model._oeusers)
+                {
+                    <tr>
+                        <td class="showDetails pointer">@(Model._oeusers.IndexOf(item) + 1)</td>
+                        <td class="showDetails pointer">
+                            <label>
+                                <img id="IP300X200" src="~/@item.IP300X200" asp-append-version="true" style="max-height:100px;max-width:100px;" />
+                            </label>
+                        </td>
+                        <td class="showDetails pointer"> <label> @item.FirstName @item.LastName</label></td>
+                        <td class="showDetails pointer"> <label> @item.OurEduId </label></td>
+                        <td class="showDetails pointer"><label> @item.LastLogoutDate?.ToLocalTime() </label></td>
+                        <td class="showDetails pointer"> <label> @item.LastEntryDate?.ToLocalTime() </label></td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    }
+}
+

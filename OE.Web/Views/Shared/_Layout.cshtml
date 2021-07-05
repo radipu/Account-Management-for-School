@@ -1,0 +1,94 @@
+﻿@using OE.Web.Models
+@{
+    var Layoutmodel = (IndexLayoutVM)ViewBag.IndexLayoutVM;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <title>@ViewData["Title"]-@Html.Raw(Layoutmodel.InstitutionName)</title>
+    <link rel="shortcut icon" asp-append-version="true" href="~/@Layoutmodel.Favicon">
+    <environment include="Development">
+        <!--Default CSS Files-->
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />        
+        <link href="~/DataDictionary/FontAwesome/css/all.css" rel="stylesheet" />
+       
+        <!--Others CSS Files-->        
+        <link rel="stylesheet" href="~/DataDictionary/css/frontend/common.css" type="text/css" />
+        <link rel="stylesheet" href="~/DataDictionary/css/frontend/Home.css" type="text/css" />
+        <link rel="stylesheet" href="~/DataDictionary/css/frontend/Account.css" type="text/css" />
+        <link rel="stylesheet" href="~/DataDictionary/css/frontend/Login.css" type="text/css" />
+    </environment>
+    <environment exclude="Development">
+        <!--Default CSS Files-->
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />        
+        <link href="~/DataDictionary/FontAwesome/css/all.min.css" rel="stylesheet" />
+        
+        <!--Others CSS Files-->        
+        <link rel="stylesheet" href="~/DataDictionary/css/frontend/common.css" type="text/css" />
+        <link rel="stylesheet" href="~/DataDictionary/css/frontend/Home.css" type="text/css" />
+        <link rel="stylesheet" href="~/DataDictionary/css/frontend/Account.css" type="text/css" />
+        <link rel="stylesheet" href="~/DataDictionary/css/frontend/Login.css" type="text/css" />
+
+
+    </environment>
+
+</head>
+
+<body>
+    <header>
+        <partial name="_header" />
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">           
+            @RenderBody()
+        </main>
+
+        
+        <br />
+        <footer class="border-top text-muted" >
+            <p>
+                
+            </p>
+        </footer>
+
+    </div>  
+    
+    <!-- The Modal -->
+    
+   
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        
+        <script src="~/DataDictionary/FontAwesome/js/all.js"></script>
+        
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>       
+        <script src="~/DataDictionary/FontAwesome/js/all.min.js"></script>        
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+
+@section Scripts{
+    <script type="text/javascript">
+      
+
+        //[NOTE: Tip]
+        $('[data-toggle="popover"]').popover({
+            trigger: 'focus'
+        })
+
+    </script>
+}
+

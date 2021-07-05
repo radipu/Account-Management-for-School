@@ -1,0 +1,50 @@
+﻿@model OE.Web.Areas.Institution.Models.UsersVM.IndexUsersVM
+@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutMain.cshtml";
+}
+<h3> OurEdu Users</h3>
+<br />
+
+<div class="row">
+    <div class="col-12 col-sm-6 col-md-3 pull-right">
+        <form asp-area="Institution" asp-controller="Users" asp-action="UserList" method="post">
+            @Html.DropDownList("ddlUsersId", Model._ddlUserlist, new { @class = "form-control", onchange = "this.form.submit();" })
+        </form>
+    </div>
+</div>
+
+<h4 class="text-danger">@ViewBag.msg</h4>
+
+<br />
+<table class="table table-bordered table-hover oePage_backend">
+    <thead>
+        <tr>
+            <th class="oeTableTitle">Photo</th>
+            <th class="oeTableTitle">Name</th>
+            <th class="oeTableTitle">Email Address</th>
+            <th class="oeTableTitle">Login Id</th>
+            <th class="oeTableTitle">Contact No</th>           
+            <th class="oeTableTitle">Date of Birth</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var data in Model.OEUsersListVMs)
+        {
+            <tr>
+                <td>
+                    <img src="~/@Html.Raw(data.IP300X200)" style="width:120px; height:120px;" />
+                </td>
+                <td class="showDetails pointer">@data.FirstName @data.LastName</td>
+                <td class="showDetails pointer">@data.EmailAddress</td>
+                <td class="showDetails pointer">@data.OurEduId</td>
+                <td class="showDetails pointer">@data.ContactNo</td>
+                @*<td class="showDetails pointer">@data.GenderId</td>*@
+                <td class="showDetails pointer">@data.DateOfBirth</td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+
+

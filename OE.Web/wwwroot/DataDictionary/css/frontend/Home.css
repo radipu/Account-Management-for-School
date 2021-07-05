@@ -1,0 +1,21 @@
+.search {
+    margin-top: 150px;
+}
+
+.logo {
+    text-align: center;
+}
+
+    .logo img {
+        width: 200px;
+        height: 210px;
+    }
+
+.searchtab {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+.socialmenu img {
+    width: 26px;
+    padding-left: 2px;
+}

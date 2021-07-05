@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "~/Areas/Institution/Views/Shared/_LayoutReport.cshtml";
+}
+
+@model OE.Web.Areas.Institution.Models.StudentDiscountsVM.PrintIndexStudentDiscountsListVM;
+
+<div class="informationArea">
+    <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="center-block" />
+    <h3 class="text-center"> @Model.Institution.Name</h3>
+    <h4 class="text-center">@Model.Institution.Email</h4>
+    <h4 class="text-center">@Model.Institution.ContactNo</h4>
+    <hr />
+</div>
+<br />
+<h3 class="page-title">Exam Types</h3>
+
+<br />
+<br />
+
+
+@if (Model._StudentDiscounts.Count() == 0)
+{
+    <div class="well"><b>No Record has been matched according to selection.</b></div>
+}
+else
+{
+    <div class="watermark print-watermark">
+        <img src="~/@Html.Raw(Model.Institution.LogoPath)" class="print-logo" />
+    </div>
+
+    <br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="max-width:10px;">SN</th>
+                <th>StudentId </th>
+                <th>StudentName </th>
+
+                <th>FeeType </th>
+                <th>DiscountAmout </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var data in Model._StudentDiscounts)
+            {
+
+                <tr>
+                    <td style="max-width:10px;">@(Model._StudentDiscounts.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @data.StudentId
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.StudentName
+                    </td>
+
+                    <td class="showDetails pointer">
+                        @data.FeeType
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.DiscountAmout
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}

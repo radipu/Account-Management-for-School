@@ -1,0 +1,260 @@
+﻿
+@model OE.Web.Areas.Institution.Models.DesignationsVM.IndexDesignationsListByAdminVM;
+
+@using OE.Web.Areas.Institution.Models;
+
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Designation List</h1>
+<br />
+<button class="btn btn-success btn-sm " id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#mdlAdd">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+<br />
+<br />
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>SN</th>
+            <th>  Designation Name </th>
+            <th>  Action </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var data in Model._Designations)
+        {
+            <tr>
+                <td style="max-width:10px;">@(Model._Designations.IndexOf(data) + 1)</td>
+                <td class="showDetails pointer">
+                    @data.Name
+                </td>
+                <td style="max-width:30px;">
+                    <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                            data-id="@data.Id"
+                            data-name="@data.Name">
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                        Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm " id="btnDelete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="container">
+    @if (pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-center">
+            @if (pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Designations" asp-action="DesignationsListByAdmin" asp-route-pg="1">First</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="Designations" asp-action="DesignationsListByAdmin" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+            @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+            {
+                <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                    <a class="page-link" asp-controller="Designations" asp-action="DesignationsListByAdmin" asp-route-pg="@pge">@pge</a>
+                </li>
+            }
+            @if (pager.CurrentPage < pager.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Designations" asp-action="DesignationsListByAdmin" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                </li>
+                <li>
+                    <a class="page-link" asp-controller="Designations" asp-action="DesignationsListByAdmin" asp-route-pg="@(pager.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+
+</div>
+
+<div id="mdlAdd" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Add New Designation</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                @*<form enctype="multipart/form-data" id="addDesignation">*@
+                <form asp-action="InsertDesignation" asp-controller="Designations" method="post" data-ajax="true" enctype="multipart/form-data">
+                    <!--[Rahul - update 05May21]-->
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <label class="control-label" asp-for="Designations.Name">Designation Name</label>
+                    <input class="form-control" id="DesignationName" asp-for="Designations.Name" placeholder="Enter Designation" />
+                    <span class="text-danger" asp-validation-for="Designations.Name"></span>
+                    <!--[~Rahul - update 05May21]-->
+                    @*<label> Designation Name</label>*@
+                    @*<input type="text" name="Designations.Name" id="DesignationsName" required class="form-control" placeholder="Enter designation name">*@<br />
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewDesignation">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editDesignation">
+                    <input type="hidden" name="Designations.Id" id="editDesignationId">
+                    <hr />
+                    <label>Designation Name</label>
+                    <input type="text" name="Designations.Name" id="txtEditDesignationName" required class="form-control">
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditDesignation">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Designation</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteDesignationList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="DesignationId" id="delDesignationid">
+                    <button class="btn btn-md btn-success" id="btnDeleteDesignation">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $('tr td #btnEdit').on('click', function () {
+            $("#editDesignationId").val($(this).data("id"));
+            $("#txtEditDesignationName").val($(this).data("name"));
+        });
+        @*$("#btnSaveNewDesignation").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#addDesignation")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("InsertDesignation", "Designations", new { Area = "Institution" })',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () {
+                 }
+                });
+        });*@
+        $("#btnEditDesignation").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#editDesignation")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+               url: '@Url.Action("UpdateDesignation", "Designations")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+        $(' tr td #btnDelete').on('click', function () {
+            $("#delDesignationid").val($(this).data("id"));
+        });
+        $("#btnDeleteDesignation").on('click', function (e)
+        {
+            e.preventDefault();
+            var formData = new FormData($("#deleteDesignationList")[0]);
+            $.ajax({
+               type: 'POST',
+               data: formData,
+               contentType: false,
+               processData: false,
+
+               url: '@Url.Action("DeleteDesignation", "Designations")',
+                 success: function (response) {
+                     location.reload();
+                 },
+                 error: function (response) {
+                     alert('error: ' + response.message);
+                 },
+                 complete: function () { }
+
+                });
+        });
+
+        $(' tr td #btnDetails').on('click', function () {
+            $("#detailStudentid").val($(this).data("id"));
+        });
+    </script>
+}

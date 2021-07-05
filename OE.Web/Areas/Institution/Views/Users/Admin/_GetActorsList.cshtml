@@ -1,0 +1,186 @@
+﻿@model OE.Web.Areas.Institution.Models.UsersVM.IndexEditActorsVM
+@if (!String.IsNullOrEmpty(Model.Message))
+{
+    <div class="well"><b>@Model.Message</b></div>
+}
+
+else
+{
+    <table class="table table-bordered table-hover oePage_backend">
+        <thead>
+            <tr>
+                <th class="oeTableTitle">SN</th>
+                <th class="oeTableTitle">Actor Name</th>
+                <th class="oeTableTitle">IsActive</th>
+                <th class="oeTableTitle"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model._userAuthentication)
+            {
+                string Icon_Ok = "<i class=" + "\"fa fa-check \"" + "style =" + " \"font-size:20px;color:green\"" + "></i>";
+               
+                <tr>
+                    <td class="showDetails pointer">@(Model._userAuthentication.IndexOf(item) + 1)</td>
+                    <td class="showDetails pointer" id="_Actor">
+                        @if (item.ActorId == 11)
+                        {
+                            <a tabindex="0" data-toggle="popover" data-trigger="focus" data-container="body" title="Admin Actor" data-content="Admin actor can not possible to edit or delete because without admin you can run this system. ">
+                                <span class="glyphicon glyphicon-info-sign" style="top:5px; font-size:larger"></span>
+                            </a>
+                        }
+                        <p>@item.ActorsName</p>
+
+                        <select class="form-control" id="_ddlActors" name="userAuthentication.ActorId" asp-for-id="Id" asp-items="@(new SelectList (ViewBag.ddlActors, "Id","Name", item.ActorId))" style="display:none">
+                            <option disabled>Select Actors</option>
+                        </select>
+
+                    </td>
+                    <td class="showDetails pointer" id="_IsActive">
+                        <p>@Html.Raw(item.IsActive != true ? "" : Icon_Ok)</p>
+
+                        <input type="checkbox" name="userAuthentication.IsActive" id="txtEditIsActive" required style="width:40px; height:40px; cursor:pointer; display:none">
+                        <br />
+                    </td>
+                    <td id="_btns">
+                        <button class="btn btn-primary btn-sm" id="_btnEdit" @(item.ActorId == 11 ? "disabled" : "") data-id="@item.Id" data-userId="@item.UserId" data-isactive="@item.IsActive">
+                            <i class="fas fa-edit" aria-hidden="true"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" @(item.ActorId == 11 ? "disabled" : "") id="_btnDelete" data-id="@item.Id" data-userId="@item.UserId">
+                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                            Delete
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="_btnSave" style="display:none" data-id="@item.Id" data-userId="@item.UserId">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            Save
+                        </button>
+                        <button class="btn btn-danger btn-sm" id="_btnCancel" style="display:none">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                            Cancel
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<script type="text/javascript">   
+    //[NOTE: Tip]
+    $('[data-toggle="popover"]').popover({
+        trigger: 'focus'
+    })      
+        var IsEditFieldOpen = false;
+        $('tr td #_btnEdit').on("click", function () {
+            //[NOTE: Check editable field already open or not]
+            if (IsEditFieldOpen == false) {
+            //[NOTE: Hide normal view fields]
+            var currentRow = $(this).closest('tr');
+            $(currentRow).children("#_Actor").children("p").hide();
+            $(currentRow).children("#_IsActive").children("p").hide();
+            $(currentRow).children("#_btns").children("#_btnEdit").hide();
+            $(currentRow).children("#_btns").children("#_btnDelete").hide();
+            //[NOTE: Show editabe fields]
+            $(currentRow).children("#_Actor").children("#_ddlActors").show();
+                $(currentRow).children("#_IsActive").children("#txtEditIsActive").show();
+            $(currentRow).children("#_btns").children("#_btnSave").show();
+            $(currentRow).children("#_btns").children("#_btnCancel").show();
+                IsEditFieldOpen = true;
+
+                var Activation = $(this).data("isactive");
+                if (Activation == "True") {
+                    $(currentRow).children("#_IsActive").children("#txtEditIsActive").prop('checked', true);
+                } else {
+                    $(currentRow).children("#_IsActive").children("#txtEditIsActive").prop('checked', false);
+                }
+
+            }
+        });
+
+        $('tr td #_btnCancel').on("click", function () {
+            if (IsEditFieldOpen = true) {
+            var currentRow = $(this).closest('tr');
+
+                $(currentRow).children("#_Actor").children("#_ddlActors").hide();
+                $(currentRow).children("#_IsActive").children("#txtEditIsActive").hide();
+            $(currentRow).children("#_btns").children("#_btnSave").hide();
+            $(currentRow).children("#_btns").children("#_btnCancel").hide();
+
+                $(currentRow).children("#_Actor").children("p").show();
+                $(currentRow).children("#_IsActive").children("p").show();
+            $(currentRow).children("#_btns").children("#_btnEdit").show();
+            $(currentRow).children("#_btns").children("#_btnDelete").show();
+            IsEditFieldOpen = false;
+            }
+        });
+
+        $("tr td #_btnSave").on('click', function (e) {
+               e.preventDefault();
+               var currentRow = $(this).closest('tr');
+               var _id = $(this).data('id');
+               var _userId = $(this).data('userid');
+
+               var _actorId = $(currentRow).children("#_Actor").children("#_ddlActors").val();
+            var _isActive = $(currentRow).children("#_IsActive").children("#txtEditIsActive").val();
+
+            if ($(currentRow).children("#_IsActive").children("#txtEditIsActive").is(":checked")) {
+                _isActive = true;
+            }
+            else {
+                _isActive = false;
+            }
+
+            $.ajax({
+                    type: 'POST',
+                    data: { id: _id, userId: _userId, actorId: _actorId, isActive: _isActive },
+                dataType: 'json',
+                cache: false,
+                url: '@Url.Action("UpdateActors", "Users", new { Area = "Institution" })',
+                success: function (data) {
+                    if (data.result == null || data.result == "") {
+                        var url = '@Url.Action("ActorsForEdit", "Users")';
+                        $('#mdlModify #ActorsList').load(url, { UserId: _userId });
+                    } else {
+                         $('#msg').text(data.result);
+                         $('#MessageBox').modal();
+                    }
+                    },
+                error: function (data) {
+                },
+                complete: function (data) {
+                }
+                });
+            });
+
+        $("tr td #_btnDelete").on('click', function (e) {
+            e.preventDefault();
+            if (confirm('Are your sure to delete?')) {
+                var _id = $(this).data('id');
+                var _userId = $(this).data('userid');
+
+                $.ajax({
+                type: 'POST',
+                data: {  id: _id},
+                dataType: 'json',
+                cache: false,
+                url: '@Url.Action("DeleteActors", "Users", new { Area = "Institution" })',
+                success: function (data) {
+                    if (data.result == null || data.result == "") {
+                        var url = '@Url.Action("ActorsForEdit", "Users")';
+                        $('#mdlModify #ActorsList').load(url, { UserId: _userId });
+                    } else {
+                         $('#msg').text(data.result);
+                         $('#MessageBox').modal();
+                    }
+                    },
+                error: function (data) {
+                },
+                complete: function (data) {
+                }
+                });
+            }
+            else {}
+        });
+
+</script>

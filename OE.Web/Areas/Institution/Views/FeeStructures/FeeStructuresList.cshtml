@@ -1,0 +1,488 @@
+﻿
+@model OE.Web.Areas.Institution.Models.FeeStructuresVM.IndexFeeStructuresListVM;
+
+@using OE.Web.Areas.Institution.Models;
+@{
+    //ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1 class="page-title">Fee Structure List</h1>
+<button type="button" class="btn btn-success btn-sm" id="btnAdd" name="btnAdd" data-toggle="modal" data-target="#myModal">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Add
+</button>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!--modal content-->
+        <div class="modal-content">
+            <!--modal header-->
+            <div class="modal-header">
+                <h4>Add new fee structure</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!--modal body-->
+            <div class="modal-body">
+                <form asp-controller="FeeStructures" asp-action="InsertFeeStructure" method="post" data-ajax="true" enctype="multipart/form-data" id="addFeeStructures">
+                    <label> Class </label>
+                    <select class="form-control"
+                            id="addClassId"
+                            asp-for-id="ClassId"
+                            name="FeeStructures.ClassId"
+                            asp-items="@(new SelectList(ViewBag.ddlClass, "Id", "Name"))">
+                        <option value="Select Class">Select Class</option>
+                    </select>
+                    <hr />
+                    <label> Fee Name</label>
+                    <select class="form-control" id="addFeeTypeId" name="FeeStructures.FeeTypeId" asp-for-id="Id" asp-items="@(new SelectList (String.Empty, "Id","Name"))"  placeholder="Enter fee type"></select>
+                    <hr />
+                    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                    <label class="control-label" asp-for="FeeStructures.Amount">Amount</label>
+                    <input type="number" name="FeeStructures.Amount" id="Amount" asp-for="FeeStructures.Amount" class="form-control" placeholder="Enter fee amount">
+                    <span class="text-danger" asp-validation-for="FeeStructures.Amount"></span>
+                    <hr />
+                    <label> YearlyTermNo</label>
+                    <input type="number" name="FeeStructures.YearlyTermNo" id="ClassName" required class="form-control" placeholder="Enter how many times to pay in a year">
+                    <hr />
+                    <label> Starting Year</label>
+                    <input type="text" name="FeeStructures.StartYear" id="StartDate" required class="form-control datetime" placeholder="Enter fee effetive start year">
+                    <hr />
+                    <label> Ending Year</label>
+                    <input type="text" name="FeeStructures.EndYear" id="EndDate" required class="form-control datetime" placeholder="Enter fee is effected until year">
+                    <hr />
+                    <label> IsActive</label>
+                    <input type="checkbox" name="FeeStructures.IsActive" id="IsActive" value="True">
+                    <hr />
+                    <button class="btn btn-success btn-md" id="btnSaveNewFeestructure">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button type="button" class="btn btn-success btn-sm" id="btnSearch" name="btnSearch" data-toggle="modal" data-target="#modalSearch">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    Search
+</button>
+
+<div id="modalSearch" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!--modal content-->
+        <div class="modal-content">
+            <!--modal header-->
+            <div class="modal-header">
+                <h4>Search fee structure by class</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!--modal body-->
+            <div class="modal-body">
+                <form asp-controller="FeeStructures" asp-action="SearchFeeStructures" method="get">
+                    <select class="form-control"
+                            id="ClassId"
+                            asp-for-id="ClassId"
+                            name="SearchClassId"
+                            asp-items="@(new SelectList (ViewBag.ddlClass, "Id","Name"))">
+                        <option value="Select  Class">Select  Class</option>
+                    </select><br />
+                    <button class="btn btn-success btn-md" id="btnSearch">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        Search
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model._FeeStructures.Count == 0)
+{
+    <br />
+    <br />
+    <div class="well"><b>No record has been matched according to selection.</b></div>
+}
+
+else
+{
+    <div class="fa-pull-right">
+        <a id="Print_AssignedSubjects" class="btn btn-default hidden-print"
+           href="@Url.Action("PrintFeeStructuresList", "FeeStructures")"
+           target="_blank">
+            <i class="fa fa-print" aria-hidden="true"></i>
+            Print
+        </a>
+    </div>
+    <br />
+    <br />
+    <br />
+    @if (Model.SearchClassId != null)
+    {
+        <h5><b><span>Class:@Model.SearchClassName</span></b></h5>
+        <h5> <b>Total Amount:@Model.ammount</b></h5>
+    }
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>Class</th>
+                <th>  Fee Name </th>
+                <th>  Yearly Term </th>
+                <th>  Amount </th>
+                <th>  Starting Year</th>
+                <th>  Ending Year</th>
+                <th>  IsActive </th>
+                <th>  Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model._FeeStructures)
+            {
+                <tr>
+                    <td style="max-width:10px;">@(Model._FeeStructures.IndexOf(data) + 1)</td>
+                    <td class="showDetails pointer">
+                        @data.Class
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.FeeType
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.FeeTypeMood
+                    </td>
+                    <td class="showDetails pointer">
+                        @data.Amount
+                    </td>
+                    <td class="showDetails pointer">
+                        @if (data.StartingYear != null)
+                        {
+                            @data.StartingYear.Value.Year
+                        }
+                    </td>
+                    <td class="showDetails pointer">
+                        @if (data.EndingYear != null)
+                        {
+                            @data.EndingYear.Value.Year
+                        }
+                    </td>
+                    <td class="showDetails pointer">
+                        @if (data.IsActive == true)
+                        {
+                            <h> Yes</h>
+                        }
+                        else
+                        {
+                            <h>No</h>
+                        }
+                    </td>
+                    <td style="max-width:30px;">
+                        <button class="btn btn-primary btn-sm" id="btnEdit" name="btnEdit" data-toggle="modal" data-target="#modalEdit"
+                                data-id="@data.Id"
+                                data-classid="@data.ClassId"
+                                data-feetypeid="@data.FeeTypeId"
+                                data-amount="@data.Amount"
+                                data-yearlytermno="@data.FeeTypeMood"
+                                data-startingdate="@(data.StartingYear != null ?data.StartingYear.Value.Year : 0)"
+                                data-endingdate="@(data.EndingYear != null? data.EndingYear.Value.Year : 0)"
+                                data-valid="@data.IsActive">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" id="btnDelete" name="btnDeletete" data-toggle="modal" data-target="#modalDelete" data-id="@data.Id">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+   
+    <div class="container">
+        @if (pager.TotalPages > 0)
+        {
+            <ul class="pagination justify-content-center">
+                @if (pager.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="FeeStructures" asp-action="FeeStructuresList" asp-route-pg="1">First</a>
+                    </li>
+                    <li>
+                        <a class="page-link" asp-controller="FeeStructures" asp-action="FeeStructuresList" asp-route-pg="@(pager.CurrentPage - 1)">Previous</a>
+                    </li>
+                }
+                @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+                {
+                    <li class="page-item @(pge==pager.CurrentPage? "active" : "")">
+                        <a class="page-link" asp-controller="FeeStructures" asp-action="FeeStructuresList" asp-route-pg="@pge">@pge</a>
+                    </li>
+                }
+                @if (pager.CurrentPage < pager.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="FeeStructures" asp-action="FeeStructuresList" asp-route-pg="@(pager.CurrentPage+1)">Next</a>
+                    </li>
+                    <li>
+                        <a class="page-link" asp-controller="FeeStructures" asp-action="FeeStructuresList" asp-route-pg="@(pager.TotalPages)">Last</a>
+                    </li>
+                }
+            </ul>
+        }
+
+    </div>
+   
+}
+
+
+<div id="modalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Fee structure</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editFeeStructure">
+                    <input type="hidden" name="FeeStructures.Id" id="editFeeStructureId">
+                    <label> Class </label>
+                    <select class="form-control"
+                            id="textEditClassId"
+                            asp-for-id="ClassId"
+                            name="FeeStructures.ClassId"
+                            asp-items="@(new SelectList(ViewBag.ddlClass, "Id", "Name"))">
+                        <option value="Select Class">Select Class</option>
+                    </select>
+                    <hr />
+                    <label> FeeType</label>
+                    <select class="form-control" id="editFeeTypeId" name="FeeStructures.FeeTypeId" asp-for-id="Id" asp-items="@(new SelectList (String.Empty, "Id","Name"))"></select>
+                    <hr />
+                    <label> Amount</label>
+                    <input type="number" name="FeeStructures.Amount" id="txtEditAmount" required class="form-control">
+                    <hr />
+                    <label>Yearly Term No</label>
+                    <input type="number" name="FeeStructures.YearlyTermNo" id="txtEditTermNo" required class="form-control">
+                    <hr />
+                    <label> Starting Year</label>
+                    <input type="text" name="FeeStructures.StartYear" id="txtEditStartDate" required class="form-control datetime">
+                    <hr />
+                    <label> Ending Year</label>
+                    <input type="text" name="FeeStructures.EndYear" id="txtEditEndDate" required class="form-control datetime">
+                    <hr />
+                    <label> IsActive</label>
+                    <input type="checkbox" name="FeeStructures.IsActive" id="txtEditIsActive" value="True">
+                    <hr />
+                    <button class="btn btn-success btn-md" formmethod="post" id="btnEditFeestructure">
+                        <i class="fa fa-save" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Fee Structure</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form enctype="multipart/form-data" id="deleteFeeStructureList">
+                <div class="modal-body">
+                    <p><h4>Are you sure you want to delete this?</h4></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="FeeStructureId" id="delFeeStructureId">
+                    <button class="btn btn-md btn-success" id="btnDeleteFeeStructure">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </button>
+                    <button class="btn btn-danger btn-md " data-dismiss="modal">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+    $('tr td #btnEdit').on('click', function () {
+        $("#editFeeStructureId").val($(this).data("id"));
+        $("#textEditClassId").val($(this).data("classid"));
+        $("#textEditFeeTypeId").val($(this).data("feetypeid"));
+        $("#txtEditAmount").val($(this).data("amount"));
+        $("#txtEditTermNo").val($(this).data("yearlytermno"));
+        $("#txtEditStartDate").val($(this).data("startingdate"));
+        $("#txtEditEndDate").val($(this).data("endingdate"));
+        var valid = $(this).data("valid");
+        if (valid == "True") {
+            $('#txtEditIsActive').prop('checked', true);
+        } else {
+            $('#txtEditIsActive').prop('checked', false);
+        }
+
+        var _classId = $(this).data('classid');
+        var _feeTypeId = $(this).data('feetypeid');
+         var feeUrl = '@Url.Action("DropDown_FeeTypes", "FeeStructures", new { Area = "Institution" })';
+        $.getJSON(feeUrl, { ddlClassId: _classId }, function (jsonResult) {
+                    if (jsonResult.length != 0) {
+                        var item = '<option value="">Select Fee Type</option>';
+                        $("#modalEdit #editFeeTypeId").empty();
+                        $.each(jsonResult, function (i, row) {
+                            if (row.value == _feeTypeId) {
+                                item += "<option value='" + row.value + "' selected='selected'>" + row.text + "</option>";
+                            } else
+                            item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                        });
+
+                        $('#modalEdit #editFeeTypeId').html(item);
+                    }
+        });
+    });
+
+
+            $("#addClassId").on('change', function () {
+            var url = '@Url.Action("DropDown_FeeTypes", "FeeStructures", new { Area = "Institution" })';
+            var classId = $('#addClassId').val();
+
+        if (classId != 0) {
+            $.getJSON(url, {ddlClassId: classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = "<option value=''>Select Fee Type</option>";
+                    $("#addFeeTypeId").empty();
+                    $.each(jsonResult, function (i, row) {
+                        item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#addFeeTypeId').html(item);
+
+                }
+                else {
+                    $('#addFeeTypeId').html("<option value=''>Select Fee Type</option>");
+
+                }
+            })
+        }
+        else {
+            $('#addFeeTypeId').html("<option value=''>Select Fee Type</option>");
+
+        }
+    });
+        $("#textEditClassId").on('change', function () {
+            var url = '@Url.Action("DropDown_FeeTypes", "FeeStructures", new { Area = "Institution" })';
+            var classId = $('#textEditClassId').val();
+
+        if (classId != 0) {
+            $.getJSON(url, {ddlClassId: classId }, function (jsonResult) {
+                if (jsonResult.length != 0) {
+                    var item = "<option value=''>Select Fee Type</option>";
+                    $("#modalEdit #editFeeTypeId").empty();
+                    $.each(jsonResult, function (i, row) {
+                        item += "<option value='" + row.value + "'>" + row.text + "</option>";
+                    });
+                    $('#modalEdit #editFeeTypeId').html(item);
+
+                }
+                else {
+                    $('#modalEdit #editFeeTypeId').html("<option value=''>Select Fee Type</option>");
+
+                }
+            })
+        }
+        else {
+            $('#modalEdit #editFeeTypeId').html("<option value=''>Select Fee Type</option>");
+
+        }
+    });
+
+    @*$("#btnSaveNewFeestructure").on('click', function (e) {
+        e.preventDefault();
+        var formData = new FormData($("#addFeeStructures")[0]);
+        $.ajax({
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+
+            url: '@Url.Action("InsertFeeStructure", "FeeStructures", new { Area = "Institution" })',
+            success: function (response) {
+                location.reload();
+            },
+            error: function (response) {
+                alert('error: ' + response.message);
+            },
+            complete: function () {
+            }
+        });
+    });*@
+    $("#btnEditFeestructure").on('click', function (e) {
+        e.preventDefault();
+        var formData = new FormData($("#editFeeStructure")[0]);
+        $.ajax({
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+
+            url: '@Url.Action("UpdateFeeStructure", "FeeStructures")',
+            success: function (response) {
+                location.reload();
+            },
+            error: function (response) {
+                alert('error: ' + response.message);
+            },
+            complete: function () { }
+
+        });
+    });
+    $(' tr td #btnDelete').on('click', function () {
+        $("#delFeeStructureId").val($(this).data("id"));
+    });
+    $("#btnDeleteFeeStructure").on('click', function (e) {
+        e.preventDefault();
+        var formData = new FormData($("#deleteFeeStructureList")[0]);
+        $.ajax({
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+
+            url: '@Url.Action("DeleteFeeStructure", "FeeStructures")',
+            success: function (response) {
+                location.reload();
+            },
+            error: function (response) {
+                alert('error: ' + response.message);
+            },
+            complete: function () { }
+
+        });
+    });
+
+    </script>
+}

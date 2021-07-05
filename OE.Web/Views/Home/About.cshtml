@@ -1,0 +1,30 @@
+﻿<h2>test</h2>
+
+
+@model OE.Web.Models.IndexAboutVM
+
+
+<div class="container container-customized">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home"><b>About</b></a></li>
+        <li><a data-toggle="tab" href="#menu1"><b>Mission & Vision</b></a></li>
+        <li><a data-toggle="tab" href="#menu2"><b>Our Product</b></a></li>
+        <li><a data-toggle="tab" href="#menu3"><b>Our Team</b></a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            @*@Html.Partial("about/_aboutUs.cshtml")*@
+            @await Html.PartialAsync("about/_aboutUs")
+        </div>
+        <div id="menu1" class="tab-pane fade">           
+            @await Html.PartialAsync("about/_missionAndVision")
+        </div>
+        <div id="menu2" class="tab-pane fade">           
+            @await Html.PartialAsync("about/_products")
+        </div>
+        <div id="menu3" class="tab-pane fade " style="font-family:'arial';color: #34495E;">          
+            @await Html.PartialAsync("about/_ourTeam", Model)
+        </div>
+    </div>
+</div>
